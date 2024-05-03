@@ -26,7 +26,7 @@ public class ChessBoard {
     }
 
     public void removePiece(ChessPosition position) {
-        squares[position.getRow()][position.getColumn()] = null;
+        squares[position.getRow()-1][position.getColumn()-1] = null;
     }
 
     /**
@@ -46,7 +46,12 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for (int i=0; i < squares.length; i++) {
+            for (int j = 0; j < squares[i].length; j++) {
+                ChessPosition position = new ChessPosition(i+1, j+1);
+                removePiece(position);
+            }
+        }
     }
 
     @Override
@@ -64,8 +69,18 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        return "ChessBoard{" +
-                "squares=" + Arrays.toString(squares) +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < squares.length; i++) {
+            for (int j = 0; j < squares[i].length; j++) {
+                ChessPiece piece = squares[i][j];
+                if (piece == null) {
+                    sb.append("empty ");
+                } else {
+                    sb.append(piece.toString()).append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
