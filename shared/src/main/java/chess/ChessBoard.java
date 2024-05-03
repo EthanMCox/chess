@@ -19,7 +19,12 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()][position.getColumn()] = piece;
+        // -1?
+        squares[position.getRow()-1][position.getColumn()-1] = piece;
+    }
+
+    public void removePiece(ChessPosition position) {
+        squares[position.getRow()][position.getColumn()] = null;
     }
 
     /**
@@ -31,7 +36,7 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         // -1 on both of these?
-        return squares[position.getRow()][position.getColumn()];
+        return squares[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
