@@ -5,13 +5,11 @@ import java.util.ArrayList;
 
 public class BishopMovesCalculator extends PieceMovesCalculator {
 
-//  private boolean isOpponentPiece(ChessBoard board, ChessPosition position, ChessGame.TeamColor pieceColor) {
-//
-//  }
-  public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {
+  // Implement logic for boundary checks, piece blocking, capturing pieces, on every diagonal
+  public Collection<ChessMove> bishopPieceMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {
     // Logic for implementing bishop moves
     Collection<ChessMove> moves = new ArrayList<>();
-
-    return new ArrayList<>();
+    addDiagonalMoves(board, myPosition, pieceColor, moves);
+    return moves;
   }
 }
