@@ -82,6 +82,73 @@ public class PieceMovesCalculator {
       moves.add(new ChessMove(myPosition, position, null));
     }
   }
+
+  protected void addStraightMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Collection<ChessMove> moves) {
+    int row = myPosition.getRow();
+    int col = myPosition.getColumn();
+
+    // Check for moves above
+    for (int i = 1; i < 8; i++) {
+      ChessPosition position = new ChessPosition(row + i, col);
+      if (notInBounds(position)) {
+        break;
+      }
+      if (hasPiece(board, position)) {
+        if (isOpponentPiece(board, position, pieceColor)) {
+          moves.add(new ChessMove(myPosition, position, null));
+        }
+        break;
+      }
+      moves.add(new ChessMove(myPosition, position, null));
+    }
+
+    // Check for moves below
+    for (int i = 1; i < 8; i++) {
+      ChessPosition position = new ChessPosition(row - i, col);
+      if (notInBounds(position)) {
+        break;
+      }
+      if (hasPiece(board, position)) {
+        if (isOpponentPiece(board, position, pieceColor)) {
+          moves.add(new ChessMove(myPosition, position, null));
+        }
+        break;
+      }
+      moves.add(new ChessMove(myPosition, position, null));
+    }
+
+    // Check for moves to the right
+    for (int i = 1; i < 8; i++) {
+      ChessPosition position = new ChessPosition(row, col + i);
+      if (notInBounds(position)) {
+        break;
+      }
+      if (hasPiece(board, position)) {
+        if (isOpponentPiece(board, position, pieceColor)) {
+          moves.add(new ChessMove(myPosition, position, null));
+        }
+        break;
+      }
+      moves.add(new ChessMove(myPosition, position, null));
+    }
+
+    // Check for moves to the left
+    for (int i = 1; i < 8; i++) {
+      ChessPosition position = new ChessPosition(row, col - i);
+      if (notInBounds(position)) {
+        break;
+      }
+      if (hasPiece(board, position)) {
+        if (isOpponentPiece(board, position, pieceColor)) {
+          moves.add(new ChessMove(myPosition, position, null));
+        }
+        break;
+      }
+      moves.add(new ChessMove(myPosition, position, null));
+    }
+  }
+
+
   public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
     Collection<ChessMove> moves;
     switch (type) {
@@ -103,7 +170,7 @@ public class PieceMovesCalculator {
         break;
       case ROOK:
         RookMovesCalculator rookCalculator = new RookMovesCalculator();
-        moves = rookCalculator.pieceMoves(board, myPosition, pieceColor);
+        moves = rookCalculator.rookPieceMoves(board, myPosition, pieceColor);
         break;
       case PAWN:
         PawnMovesCalculator pawnCalculator = new PawnMovesCalculator();
