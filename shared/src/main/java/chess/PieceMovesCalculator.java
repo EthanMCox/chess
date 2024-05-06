@@ -166,7 +166,7 @@ public class PieceMovesCalculator {
         break;
       case KNIGHT:
         KnightMovesCalculator knightCalculator = new KnightMovesCalculator();
-        moves = knightCalculator.pieceMoves(board, myPosition, pieceColor);
+        moves = knightCalculator.knightPieceMoves(board, myPosition, pieceColor);
         break;
       case ROOK:
         RookMovesCalculator rookCalculator = new RookMovesCalculator();
