@@ -158,7 +158,7 @@ public class PieceMovesCalculator {
         break;
       case QUEEN:
         QueenMovesCalculator queenCalculator = new QueenMovesCalculator();
-        moves = queenCalculator.pieceMoves(board, myPosition, pieceColor);
+        moves = queenCalculator.queenPieceMoves(board, myPosition, pieceColor);
         break;
       case BISHOP:
         BishopMovesCalculator bishopCalculator = new BishopMovesCalculator();
