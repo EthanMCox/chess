@@ -154,7 +154,7 @@ public class PieceMovesCalculator {
     switch (type) {
       case KING:
         KingMovesCalculator kingCalculator = new KingMovesCalculator();
-        moves = kingCalculator.pieceMoves(board, myPosition, pieceColor);
+        moves = kingCalculator.kingPieceMoves(board, myPosition, pieceColor);
         break;
       case QUEEN:
         QueenMovesCalculator queenCalculator = new QueenMovesCalculator();
