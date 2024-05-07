@@ -174,7 +174,7 @@ public class PieceMovesCalculator {
         break;
       case PAWN:
         PawnMovesCalculator pawnCalculator = new PawnMovesCalculator();
-        moves = pawnCalculator.pieceMoves(board, myPosition, pieceColor);
+        moves = pawnCalculator.pawnPieceMoves(board, myPosition, pieceColor);
         break;
       default:
         moves = new ArrayList<>();
