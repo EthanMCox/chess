@@ -30,9 +30,10 @@ public class ChessGame {
         teamTurn = TeamColor.WHITE;
     }
 
-    public ChessGame(ChessBoard board) {
+
+    public ChessGame(ChessBoard board, TeamColor teamTurn) {
         this.board = board;
-        teamTurn = TeamColor.WHITE;
+        this.teamTurn = teamTurn;
     }
 
     /**
@@ -88,7 +89,26 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        for (ChessMove move : possibleMoves) {
+            // Check if move puts own king in check
+//            ChessBoard newBoard = new ChessBoard(board);
+//            newBoard.movePiece(move);
+            if (isInCheck(teamTurn)) {
+                possibleMoves.remove(move);
+            }
+        }
+
+        return possibleMoves;
+    }
+
+    private ChessGame makeGameCopy() {
+//        return new ChessGame(new ChessBoard(board), teamTurn);
+        return new ChessGame();
     }
 
     /**
@@ -131,8 +151,6 @@ public class ChessGame {
                 }
             }
         }
-
-
         return false;
     }
 
