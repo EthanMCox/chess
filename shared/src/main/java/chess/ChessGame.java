@@ -33,7 +33,7 @@ public class ChessGame {
 
     public ChessGame(ChessBoard board, TeamColor teamTurn) {
         this.board = new ChessBoard(board);
-        this.teamTurn = teamTurn;
+        setTeamTurn(teamTurn);
     }
 
     /**
@@ -94,16 +94,19 @@ public class ChessGame {
             return null;
         }
         Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        ChessGame.TeamColor pieceTeamTurn = piece.getTeamColor();
         for (ChessMove move : possibleMoves) {
-            // Check if move puts own king in check
-//            ChessBoard newBoard = new ChessBoard(board);
-//            newBoard.movePiece(move);
-            if (isInCheck(teamTurn)) {
-                possibleMoves.remove(move);
+            ChessGame forecastedGame = new ChessGame(new ChessBoard(board), pieceTeamTurn);
+            ChessBoard newBoard = forecastedGame.getBoard();
+
+            newBoard.movePiece(move);
+            // Check if king is in check after making a move
+            if (!forecastedGame.isInCheck(pieceTeamTurn)) {
+                validMoves.add(move);
             }
         }
-
-        return possibleMoves;
+        return validMoves;
     }
 
     private ChessGame copy() {

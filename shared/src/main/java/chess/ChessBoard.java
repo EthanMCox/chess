@@ -17,7 +17,12 @@ public class ChessBoard {
     public ChessBoard(ChessBoard otherBoard) {
         for (int i = 0; i < squares.length; i++) {
             for (int j = 0; j < squares[i].length; j++) {
-                squares[i][j] = otherBoard.getPiece(new ChessPosition(i+1,j+1));
+                ChessPiece oldPiece = otherBoard.getPiece(new ChessPosition(i+1,j+1));
+                if (oldPiece != null) {
+                    squares[i][j] = new ChessPiece(oldPiece);
+                } else {
+                    squares[i][j] = null;
+                }
             }
         }
     }
@@ -48,6 +53,12 @@ public class ChessBoard {
 
     public void removePiece(ChessPosition position) {
         squares[position.getRow()-1][position.getColumn()-1] = null;
+    }
+
+    public void movePiece(ChessMove move) {
+        ChessPiece piece = getPiece(move.getStartPosition());
+        addPiece(move.getEndPosition(), piece);
+        removePiece(move.getStartPosition());
     }
 
     /**

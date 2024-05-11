@@ -20,6 +20,11 @@ public class ChessPiece {
     this.type = type;
   }
 
+  public ChessPiece(ChessPiece piece) {
+    this.pieceColor = piece.getTeamColor();
+    this.type = piece.getPieceType();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
