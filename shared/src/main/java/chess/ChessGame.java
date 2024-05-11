@@ -32,7 +32,7 @@ public class ChessGame {
 
 
     public ChessGame(ChessBoard board, TeamColor teamTurn) {
-        this.board = board;
+        this.board = new ChessBoard(board);
         this.teamTurn = teamTurn;
     }
 
@@ -106,9 +106,8 @@ public class ChessGame {
         return possibleMoves;
     }
 
-    private ChessGame makeGameCopy() {
-//        return new ChessGame(new ChessBoard(board), teamTurn);
-        return new ChessGame();
+    private ChessGame copy() {
+        return new ChessGame(new ChessBoard(board), teamTurn);
     }
 
     /**
