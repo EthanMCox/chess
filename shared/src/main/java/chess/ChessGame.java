@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,6 +12,17 @@ import java.util.Collection;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
+
+    public static final Collection<ChessPosition> VALID_POSITIONS;
+
+    static {
+        VALID_POSITIONS = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                VALID_POSITIONS.add(new ChessPosition(i, j));
+            }
+        }
+    }
     public ChessGame() {
 
     }
@@ -67,7 +79,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // Implement this later
+        return false;
     }
 
     /**
@@ -77,7 +90,8 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // Implement this method later
+        return false;
     }
 
     /**
@@ -88,7 +102,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // Implement this method later
+        return false;
     }
 
     /**
