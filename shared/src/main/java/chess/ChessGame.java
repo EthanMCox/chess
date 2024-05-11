@@ -102,8 +102,16 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        // Implement this method later
-        return false;
+        for (ChessPosition position : VALID_POSITIONS) {
+            ChessPiece piece = board.getPiece(position);
+            if (piece == null || piece.getTeamColor() != teamColor) {
+                continue;
+            }
+            if (!validMoves(position).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
