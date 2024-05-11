@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -24,7 +25,14 @@ public class ChessGame {
         }
     }
     public ChessGame() {
+        board = new ChessBoard();
+        board.resetBoard();
+        teamTurn = TeamColor.WHITE;
+    }
 
+    public ChessGame(ChessBoard board) {
+        this.board = board;
+        teamTurn = TeamColor.WHITE;
     }
 
     /**
@@ -41,6 +49,27 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, teamTurn);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "board=" + board +
+                ", teamTurn=" + teamTurn +
+                '}';
     }
 
     /**
@@ -79,7 +108,31 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        // Implement this later
+        ChessPosition kingPosition = null;
+        for (ChessPosition position : VALID_POSITIONS) { // Iterate across board to find King Position
+            ChessPiece piece = board.getPiece(position);
+            if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                kingPosition = position;
+            } else {
+                continue;
+            }
+        }
+
+        // If any piece can capture the king, then the team is in check
+        for (ChessPosition position : VALID_POSITIONS) {
+            ChessPiece piece = board.getPiece(position);
+            if (piece == null || piece.getTeamColor() == teamColor) {
+                continue;
+            }
+            Collection<ChessMove> moves = piece.pieceMoves(board, position);
+            for (ChessMove move : moves) {
+                if (move.getEndPosition().equals(kingPosition)) {
+                    return true;
+                }
+            }
+        }
+
+
         return false;
     }
 
