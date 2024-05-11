@@ -110,10 +110,6 @@ public class ChessGame {
         return validMoves;
     }
 
-    private ChessGame copy() {
-        return new ChessGame(new ChessBoard(board), teamTurn);
-    }
-
     /**
      * Makes a move in a chess game
      *
