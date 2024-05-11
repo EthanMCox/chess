@@ -1,7 +1,8 @@
 package chess;
 
 import java.util.Collection;
-import java.util.ArrayList;
+//import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -17,7 +18,7 @@ public class ChessGame {
     public static final Collection<ChessPosition> VALID_POSITIONS;
 
     static {
-        VALID_POSITIONS = new ArrayList<>();
+        VALID_POSITIONS = new HashSet<>();
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 VALID_POSITIONS.add(new ChessPosition(i, j));
@@ -94,7 +95,7 @@ public class ChessGame {
             return null;
         }
         Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
-        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> validMoves = new HashSet<>();
         ChessGame.TeamColor pieceTeamTurn = piece.getTeamColor();
         for (ChessMove move : possibleMoves) {
             ChessGame forecastedGame = new ChessGame(new ChessBoard(board), pieceTeamTurn);
@@ -121,11 +122,19 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPosition = move.getStartPosition();
-        if (startPosition == null || !VALID_POSITIONS.contains(startPosition) ||
-        !validMoves(startPosition).contains(move)) {
+
+        if (startPosition == null || !VALID_POSITIONS.contains(startPosition)) {
             throw new InvalidMoveException("Invalid start position");
-        } else {
+        } else if (board.getPiece(startPosition) == null){
+            throw new InvalidMoveException("No piece at start position");
+        } else if (!validMoves(startPosition).contains(move)) {
+            throw new InvalidMoveException("Invalid move");
+        } else if (!board.getPiece(startPosition).getTeamColor().equals(teamTurn)) {
+            throw new InvalidMoveException("Not your turn");
+        }
+        else {
             board.movePiece(move);
+            teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         }
     }
 
