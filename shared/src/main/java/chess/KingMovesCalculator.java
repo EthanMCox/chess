@@ -19,18 +19,7 @@ public class KingMovesCalculator extends PieceMovesCalculator {
             new ChessPosition(row, col - 1)
     };
 
-    for (ChessPosition position : positions) {
-      if (notInBounds(position)) {
-        continue;
-      }
-      if (hasPiece(board, position)) {
-        if (isOpponentPiece(board, position, pieceColor)) {
-          moves.add(new ChessMove(myPosition, position, null));
-        }
-      } else {
-        moves.add(new ChessMove(myPosition, position, null));
-      }
-    }
+    addKnightOrKingMovesFromPositions(board, myPosition, pieceColor, moves, positions);
   }
 
   public Collection<ChessMove> kingPieceMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {
