@@ -195,4 +195,32 @@ public class PieceMovesCalculator {
   protected boolean notInBounds(ChessPosition position) {
     return position.getRow() < 1 || position.getRow() > 8 || position.getColumn() < 1 || position.getColumn() > 8;
   }
+
+  public void handleEnPassant(ChessBoard board, ChessPosition startPosition, Collection<ChessMove> possibleMoves, ChessPiece piece) {
+    if (piece == null || piece.getPieceType() != ChessPiece.PieceType.PAWN) {
+      return;
+    }
+    ChessGame.TeamColor pieceColor = piece.getTeamColor();
+    int row = startPosition.getRow();
+    int direction;
+    if (row == 5 && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+      direction = 1;
+    }
+    else if (row == 4 && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+      direction = -1;
+    }
+    else {
+      return;
+    }
+    int col = startPosition.getColumn();
+    ChessPiece pieceLeft = board.getPiece(new ChessPosition(row, col - 1));
+    ChessPiece pieceRight = board.getPiece(new ChessPosition(row, col + 1));
+
+    if ((pieceLeft != null && pieceLeft.getPieceType() == ChessPiece.PieceType.PAWN) && (pieceLeft.getTeamColor() != pieceColor) && enPassantIsValid(row, col, direction, col - 1)) {
+      addEnPassantMove(startPosition, possibleMoves, row, direction, col - 1);
+    }
+    if ((pieceRight != null && pieceRight.getPieceType() == ChessPiece.PieceType.PAWN) && (pieceRight.getTeamColor() != pieceColor) && enPassantIsValid(row, col, direction, col + 1)) {
+      addEnPassantMove(startPosition, possibleMoves, row, direction, col + 1);
+    }
+  }
 }

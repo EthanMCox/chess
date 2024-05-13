@@ -142,22 +142,6 @@ public class ChessGame {
         }
     }
 
-    private boolean enPassantIsValid(int row, int column, int direction, int targetColumn) {
-        ChessPosition diagonalPosition = new ChessPosition(row + direction, targetColumn);
-        ChessPosition twoSpacesForward = new ChessPosition(row + 2 * direction, column);
-        if (board.getPiece(diagonalPosition) != null) {
-            return false;
-        }
-
-        ChessPiece oldPiece = previousBoardState.getPiece(twoSpacesForward);
-
-      return oldPiece != null && oldPiece.getPieceType() == ChessPiece.PieceType.PAWN && oldPiece.getTeamColor() != teamTurn && board.getPiece(twoSpacesForward) == null;
-    }
-
-    private void addEnPassantMove(ChessPosition startPosition, Collection<ChessMove> possibleMoves, int row, int direction, int targetColumn) {
-        ChessPosition endPosition = new ChessPosition(row + direction, targetColumn);
-        possibleMoves.add(new ChessMove(startPosition, endPosition, null));
-    }
 
     /**
      * Makes a move in a chess game
