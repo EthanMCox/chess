@@ -131,6 +131,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
 
         if (startPosition == null || !VALID_POSITIONS.contains(startPosition)) {
             throw new InvalidMoveException("Invalid start position");
@@ -138,6 +139,8 @@ public class ChessGame {
             throw new InvalidMoveException("No piece at start position");
         } else if (!validMoves(startPosition).contains(move)) {
             throw new InvalidMoveException("Invalid move");
+        }  else if (startPosition == endPosition) {
+            throw new InvalidMoveException("Start and end positions are the same");
         } else if (!board.getPiece(startPosition).getTeamColor().equals(teamTurn)) {
             throw new InvalidMoveException("Not your turn");
         }
@@ -147,13 +150,13 @@ public class ChessGame {
 
             int startRow = startPosition.getRow();
             int startCol = startPosition.getColumn();
-            checkCastlingStates(startRow, startCol);
+            updateCastlingStates(startRow, startCol);
 
             teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         }
     }
 
-    private void checkCastlingStates(int startRow, int startCol) {
+    private void updateCastlingStates(int startRow, int startCol) {
         if (startRow == 1 && startCol == 1) {
             whiteRookLeftMoved = true;
         } else if (startRow == 1 && startCol == 8) {
