@@ -127,6 +127,26 @@ public class ChessGame {
         if (piece.getPieceType() != ChessPiece.PieceType.KING) {
             return;
         }
+        ChessGame.TeamColor pieceColor = piece.getTeamColor();
+        if (pieceColor == TeamColor.WHITE) {
+            if (!whiteKingMoved) {
+                if (!whiteRookLeftMoved) {
+                    ChessPosition leftRookPosition = new ChessPosition(1, 1);
+                }
+                if (!whiteRookRightMoved) {
+                    ChessPosition rightRookPosition = new ChessPosition(1, 8);
+                }
+            }
+        } else {
+            if (!blackKingMoved) {
+                if (!blackRookLeftMoved) {
+                    ChessPosition leftRookPosition = new ChessPosition(8, 1);
+                }
+                if (!blackRookRightMoved) {
+                    ChessPosition rightRookPosition = new ChessPosition(8, 8);
+                }
+            }
+        }
     }
 
     /**
@@ -156,24 +176,26 @@ public class ChessGame {
 
             int startRow = startPosition.getRow();
             int startCol = startPosition.getColumn();
-            updateCastlingStates(startRow, startCol);
+            int endRow = endPosition.getRow();
+            int endCol = endPosition.getColumn();
+            updateCastlingStates(startRow, startCol, endRow, endCol);
 
             teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         }
     }
 
-    private void updateCastlingStates(int startRow, int startCol) {
-        if (startRow == 1 && startCol == 1) {
+    private void updateCastlingStates(int startRow, int startCol, int endRow, int endCol) {
+        if ((startRow == 1 && startCol == 1) || (endRow == 1 && endCol == 1)) {
             whiteRookLeftMoved = true;
-        } else if (startRow == 1 && startCol == 8) {
+        } else if ((startRow == 1 && startCol == 8) || (endRow == 1 && endCol == 8)) {
             whiteRookRightMoved = true;
-        } else if (startRow == 8 && startCol == 1) {
+        } else if ((startRow == 8 && startCol == 1) || (endRow == 8 && endCol == 1)) {
             blackRookLeftMoved = true;
-        } else if (startRow == 8 && startCol == 8) {
+        } else if ((startRow == 8 && startCol == 8) || (endRow == 8 && endCol == 8)) {
             blackRookRightMoved = true;
-        } else if (startRow == 1 && startCol == 5) {
+        } else if ((startRow == 1 && startCol == 5) || (endRow == 1 && endCol == 5)) {
             whiteKingMoved = true;
-        } else if (startRow == 8 && startCol == 5) {
+        } else if ((startRow == 8 && startCol == 5) || (endRow == 8 && endCol == 5)) {
             blackKingMoved = true;
         }
     }
