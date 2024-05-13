@@ -90,11 +90,4 @@ public class ChessPiece {
     PieceMovesCalculator enPassantCalculator = new PieceMovesCalculator();
     enPassantCalculator.handleEnPassant(board, previousBoardState, teamTurn, startPosition, possibleMoves, piece);
     }
-
-    public static void addCastlingMoves() {
-      PieceMovesCalculator castlingCalculator = new PieceMovesCalculator();
-      castlingCalculator.handleCastling();
-    }
-
-
 }

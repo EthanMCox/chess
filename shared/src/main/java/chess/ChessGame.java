@@ -127,26 +127,50 @@ public class ChessGame {
         if (piece.getPieceType() != ChessPiece.PieceType.KING) {
             return;
         }
-        ChessGame.TeamColor pieceColor = piece.getTeamColor();
+        TeamColor pieceColor = piece.getTeamColor();
         if (pieceColor == TeamColor.WHITE) {
             if (!whiteKingMoved) {
                 if (!whiteRookLeftMoved) {
                     ChessPosition leftRookPosition = new ChessPosition(1, 1);
+                    handleCastling(board, startPosition, leftRookPosition, possibleMoves);
                 }
                 if (!whiteRookRightMoved) {
                     ChessPosition rightRookPosition = new ChessPosition(1, 8);
+                    handleCastling(board, startPosition, rightRookPosition, possibleMoves);
                 }
             }
         } else {
             if (!blackKingMoved) {
                 if (!blackRookLeftMoved) {
                     ChessPosition leftRookPosition = new ChessPosition(8, 1);
+                    handleCastling(board, startPosition, leftRookPosition, possibleMoves);
                 }
                 if (!blackRookRightMoved) {
                     ChessPosition rightRookPosition = new ChessPosition(8, 8);
+                    handleCastling(board, startPosition, rightRookPosition, possibleMoves);
                 }
             }
         }
+    }
+
+    private void handleCastling(ChessBoard board, ChessPosition kingPosition, ChessPosition rookPosition, Collection<ChessMove> possibleMoves) {
+        // Handle checking pieces if any pieces are between the king and the rook
+        int row = kingPosition.getRow();
+        int kingCol = kingPosition.getColumn();
+        int rookCol = rookPosition.getColumn();
+
+        int direction = rookCol - kingCol > 0 ? 1 : -1;
+        for (int i = 1; kingCol + i * direction != rookCol; i++) {
+            ChessPosition position = new ChessPosition(row, kingCol + i * direction);
+            if (board.getPiece(position) != null) {
+                return;
+            }
+            if (Math.abs(direction * i) <= 2 && piecePositionInDanger(teamTurn, position)) {
+                return;
+            }
+        }
+        ChessPosition newKingPosition = new ChessPosition(row, kingCol + 2 * direction);
+        possibleMoves.add(new ChessMove(kingPosition, newKingPosition, null));
     }
 
     /**

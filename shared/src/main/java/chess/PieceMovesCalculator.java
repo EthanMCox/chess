@@ -246,11 +246,4 @@ public class PieceMovesCalculator {
     ChessPosition endPosition = new ChessPosition(row + direction, targetColumn);
     possibleMoves.add(new ChessMove(startPosition, endPosition, null));
   }
-
-  public Collection<ChessMove> handleCastling() {
-    // Handle checking pieces if any pieces are between the king and the rook
-    ChessPosition kingPosition;
-    ChessBoard board;
-
-  }
 }
