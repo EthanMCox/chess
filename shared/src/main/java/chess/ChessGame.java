@@ -16,6 +16,13 @@ public class ChessGame {
 
     private ChessBoard previousBoardState;
 
+    private boolean whiteKingMoved;
+    private boolean blackKingMoved;
+    private boolean whiteRookLeftMoved;
+    private boolean whiteRookRightMoved;
+    private boolean blackRookLeftMoved;
+    private boolean blackRookRightMoved;
+
     public static final Collection<ChessPosition> VALID_POSITIONS;
 
     static {
@@ -57,24 +64,24 @@ public class ChessGame {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(board, teamTurn);
-    }
-
-    @Override
     public String toString() {
         return "ChessGame{" +
                 "board=" + board +
                 ", teamTurn=" + teamTurn +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return whiteKingMoved == chessGame.whiteKingMoved && blackKingMoved == chessGame.blackKingMoved && whiteRookLeftMoved == chessGame.whiteRookLeftMoved && whiteRookRightMoved == chessGame.whiteRookRightMoved && blackRookLeftMoved == chessGame.blackRookLeftMoved && blackRookRightMoved == chessGame.blackRookRightMoved && Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn && Objects.equals(previousBoardState, chessGame.previousBoardState);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, teamTurn, previousBoardState, whiteKingMoved, blackKingMoved, whiteRookLeftMoved, whiteRookRightMoved, blackRookLeftMoved, blackRookRightMoved);
     }
 
     /**
@@ -137,7 +144,28 @@ public class ChessGame {
         else {
             previousBoardState = new ChessBoard(board);
             board.movePiece(move);
+
+            int startRow = startPosition.getRow();
+            int startCol = startPosition.getColumn();
+            checkCastlingStates(startRow, startCol);
+
             teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        }
+    }
+
+    private void checkCastlingStates(int startRow, int startCol) {
+        if (startRow == 1 && startCol == 1) {
+            whiteRookLeftMoved = true;
+        } else if (startRow == 1 && startCol == 8) {
+            whiteRookRightMoved = true;
+        } else if (startRow == 8 && startCol == 1) {
+            blackRookLeftMoved = true;
+        } else if (startRow == 8 && startCol == 8) {
+            blackRookRightMoved = true;
+        } else if (startRow == 1 && startCol == 5) {
+            whiteKingMoved = true;
+        } else if (startRow == 8 && startCol == 5) {
+            blackKingMoved = true;
         }
     }
 
