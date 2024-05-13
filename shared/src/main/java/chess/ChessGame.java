@@ -189,7 +189,11 @@ public class ChessGame {
             }
         }
 
-        // If any piece can capture the king, then the team is in check
+        return piecePositionInDanger(teamColor, kingPosition);
+    }
+
+    private boolean piecePositionInDanger(TeamColor teamColor, ChessPosition piecePosition) {
+
         for (ChessPosition position : VALID_POSITIONS) {
             ChessPiece piece = board.getPiece(position);
             if (piece == null || piece.getTeamColor() == teamColor) {
@@ -197,7 +201,7 @@ public class ChessGame {
             }
             Collection<ChessMove> moves = piece.pieceMoves(board, position);
             for (ChessMove move : moves) {
-                if (move.getEndPosition().equals(kingPosition)) {
+                if (move.getEndPosition().equals(piecePosition)) {
                     return true;
                 }
             }
