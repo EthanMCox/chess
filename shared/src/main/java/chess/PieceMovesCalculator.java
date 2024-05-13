@@ -213,14 +213,20 @@ public class PieceMovesCalculator {
       return;
     }
     int col = startPosition.getColumn();
-    ChessPiece pieceLeft = board.getPiece(new ChessPosition(row, col - 1));
-    ChessPiece pieceRight = board.getPiece(new ChessPosition(row, col + 1));
+    ChessPosition leftPosition = new ChessPosition(row, col - 1);
+    ChessPosition rightPosition = new ChessPosition(row, col + 1);
+    checkEnPassantSide(board, previousBoardState, teamTurn, startPosition, possibleMoves, piece, pieceColor, row, col, direction, -1, leftPosition);
+    checkEnPassantSide(board, previousBoardState, teamTurn, startPosition, possibleMoves, piece, pieceColor, row, col, direction, 1, rightPosition);
+  }
 
-    if ((pieceLeft != null && pieceLeft.getPieceType() == ChessPiece.PieceType.PAWN) && (pieceLeft.getTeamColor() != pieceColor) && enPassantIsValid(board, previousBoardState, teamTurn, row, col, direction, col - 1)) {
-      addEnPassantMove(startPosition, possibleMoves, row, direction, col - 1);
+  private void checkEnPassantSide(ChessBoard board, ChessBoard previousBoardState, ChessGame.TeamColor teamTurn, ChessPosition startPosition, Collection<ChessMove> possibleMoves, ChessPiece piece, ChessGame.TeamColor pieceColor, int row, int col, int rowDirection, int colDirection, ChessPosition sidePosition){
+    if (notInBounds(sidePosition)) {
+      return;
     }
-    if ((pieceRight != null && pieceRight.getPieceType() == ChessPiece.PieceType.PAWN) && (pieceRight.getTeamColor() != pieceColor) && enPassantIsValid(board, previousBoardState, teamTurn, row, col, direction, col + 1)) {
-      addEnPassantMove(startPosition, possibleMoves, row, direction, col + 1);
+    ChessPiece sidePiece = board.getPiece(sidePosition);
+
+    if ((sidePiece != null && sidePiece.getPieceType() == ChessPiece.PieceType.PAWN) && (sidePiece.getTeamColor() != pieceColor) && enPassantIsValid(board, previousBoardState, teamTurn, row, col, rowDirection, col + colDirection)) {
+      addEnPassantMove(startPosition, possibleMoves, row, rowDirection, col + colDirection);
     }
   }
 
