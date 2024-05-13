@@ -85,8 +85,9 @@ public class ChessPiece {
         return moves;
     }
 
-  private void addEnPassantMoves(ChessBoard board, ChessPosition startPosition, Collection<ChessMove> possibleMoves, ChessPiece piece) {
+
+    public static void addEnPassantMoves(ChessBoard board, ChessBoard previousBoardState, ChessGame.TeamColor teamTurn, ChessPosition startPosition, Collection<ChessMove> possibleMoves, ChessPiece piece) {
     PieceMovesCalculator enPassantCalculator = new PieceMovesCalculator();
-    enPassantCalculator.handleEnPassant(board, startPosition, possibleMoves, piece);
+    enPassantCalculator.handleEnPassant(board, previousBoardState, teamTurn, startPosition, possibleMoves, piece);
   }
 }
