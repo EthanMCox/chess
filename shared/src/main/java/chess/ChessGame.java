@@ -158,6 +158,7 @@ public class ChessGame {
         int row = kingPosition.getRow();
         int kingCol = kingPosition.getColumn();
         int rookCol = rookPosition.getColumn();
+        TeamColor pieceColor = board.getPiece(kingPosition).getTeamColor();
 
         int direction = rookCol - kingCol > 0 ? 1 : -1;
         for (int i = 1; kingCol + i * direction != rookCol; i++) {
@@ -165,7 +166,7 @@ public class ChessGame {
             if (board.getPiece(position) != null) {
                 return;
             }
-            if (Math.abs(direction * i) <= 2 && piecePositionInDanger(teamTurn, position)) {
+            if (Math.abs(direction * i) <= 2 && piecePositionInDanger(pieceColor, position)) {
                 return;
             }
         }
