@@ -64,6 +64,16 @@ public class ChessBoard {
         if (isEnPassant(move)) {
             removePiece(new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn()));
         }
+        if (isCastling(move)) {
+            int row = move.getStartPosition().getRow();
+            int endCol = move.getEndPosition().getColumn();
+            int startCol = move.getStartPosition().getColumn();
+            int direction = (endCol - startCol) > 0 ? 1 : -1;
+            ChessPosition oldRookPosition = new ChessPosition(row, endCol + ((direction > 0) ? direction : direction * 2));
+            ChessPiece rookPiece = getPiece(oldRookPosition);
+            removePiece(oldRookPosition);
+            addPiece(new ChessPosition(row, endCol - direction), rookPiece);
+        }
         addPiece(move.getEndPosition(), piece);
         removePiece(move.getStartPosition());
     }
@@ -72,6 +82,15 @@ public class ChessBoard {
         ChessPiece piece = getPiece(move.getStartPosition());
         boolean pieceChangedColumn = (move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) != 0;
         return piece.getPieceType() == ChessPiece.PieceType.PAWN && getPiece(move.getEndPosition()) == null && pieceChangedColumn;
+    }
+
+    private boolean isCastling(ChessMove move) {
+        ChessPiece piece = getPiece(move.getStartPosition());
+        if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+            return Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2;
+        } else {
+            return false;
+        }
     }
 
     /**

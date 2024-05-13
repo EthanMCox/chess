@@ -303,6 +303,12 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+        whiteKingMoved = false;
+        blackKingMoved = false;
+        whiteRookLeftMoved = false;
+        whiteRookRightMoved = false;
+        blackRookLeftMoved = false;
+        blackRookRightMoved = false;
     }
 
     /**
