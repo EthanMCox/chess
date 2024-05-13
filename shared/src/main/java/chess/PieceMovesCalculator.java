@@ -232,7 +232,7 @@ public class PieceMovesCalculator {
 
   private boolean enPassantIsValid(ChessBoard board, ChessBoard previousBoardState, ChessGame.TeamColor teamTurn, int row, int column, int direction, int targetColumn) {
     ChessPosition diagonalPosition = new ChessPosition(row + direction, targetColumn);
-    ChessPosition twoSpacesForward = new ChessPosition(row + 2 * direction, column);
+    ChessPosition twoSpacesForward = new ChessPosition(row + 2 * direction, targetColumn);
     if (board.getPiece(diagonalPosition) != null) {
       return false;
     }

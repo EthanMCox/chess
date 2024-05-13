@@ -61,8 +61,17 @@ public class ChessBoard {
         if (move.getPromotionPiece() != null) {
             piece = new ChessPiece(piece.getTeamColor(), promotionType);
         }
+        if (isEnPassant(move)) {
+            removePiece(new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn()));
+        }
         addPiece(move.getEndPosition(), piece);
         removePiece(move.getStartPosition());
+    }
+
+    private boolean isEnPassant(ChessMove move) {
+        ChessPiece piece = getPiece(move.getStartPosition());
+        boolean pieceChangedColumn = (move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) != 0;
+        return piece.getPieceType() == ChessPiece.PieceType.PAWN && getPiece(move.getEndPosition()) == null && pieceChangedColumn;
     }
 
     /**
