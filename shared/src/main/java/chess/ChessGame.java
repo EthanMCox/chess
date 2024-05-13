@@ -106,6 +106,7 @@ public class ChessGame {
         }
         Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
         ChessPiece.addEnPassantMoves(board, previousBoardState, teamTurn, startPosition, possibleMoves, piece);
+        addCastlingMoves(startPosition, possibleMoves, piece);
         Collection<ChessMove> validMoves = new HashSet<>();
         ChessGame.TeamColor pieceTeamTurn = piece.getTeamColor();
         for (ChessMove move : possibleMoves) {
@@ -122,6 +123,11 @@ public class ChessGame {
         return validMoves;
     }
 
+    private void addCastlingMoves(ChessPosition startPosition, Collection<ChessMove> possibleMoves, ChessPiece piece) {
+        if (piece.getPieceType() != ChessPiece.PieceType.KING) {
+            return;
+        }
+    }
 
     /**
      * Makes a move in a chess game

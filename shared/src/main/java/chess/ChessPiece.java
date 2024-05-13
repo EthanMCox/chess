@@ -89,5 +89,12 @@ public class ChessPiece {
     public static void addEnPassantMoves(ChessBoard board, ChessBoard previousBoardState, ChessGame.TeamColor teamTurn, ChessPosition startPosition, Collection<ChessMove> possibleMoves, ChessPiece piece) {
     PieceMovesCalculator enPassantCalculator = new PieceMovesCalculator();
     enPassantCalculator.handleEnPassant(board, previousBoardState, teamTurn, startPosition, possibleMoves, piece);
-  }
+    }
+
+    public static void addCastlingMoves() {
+      PieceMovesCalculator castlingCalculator = new PieceMovesCalculator();
+      castlingCalculator.handleCastling();
+    }
+
+
 }
