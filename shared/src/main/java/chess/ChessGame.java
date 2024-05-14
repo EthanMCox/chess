@@ -127,6 +127,9 @@ public class ChessGame {
         if (piece.getPieceType() != ChessPiece.PieceType.KING) {
             return;
         }
+        if (startPosition.getColumn() != 5) {
+            return;
+        }
         TeamColor pieceColor = piece.getTeamColor();
         if (pieceColor == TeamColor.WHITE) {
             if (!whiteKingMoved) {
@@ -237,6 +240,7 @@ public class ChessGame {
             ChessPiece piece = board.getPiece(position);
             if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
                 kingPosition = position;
+                break;
             } else {
                 continue;
             }
