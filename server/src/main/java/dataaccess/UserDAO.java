@@ -1,4 +1,4 @@
 package dataaccess;
 
-public class UserDAO {
+interface UserDAO {
 }
