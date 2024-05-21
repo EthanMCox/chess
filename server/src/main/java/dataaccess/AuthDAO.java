@@ -7,4 +7,7 @@ interface AuthDAO {
   AuthData createAuth(String username);
   AuthData getAuth(String authToken);
   void deleteAuth(String authToken);
+  default String generateAuthToken() {
+    return java.util.UUID.randomUUID().toString();
+  }
 }
