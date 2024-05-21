@@ -18,29 +18,46 @@ public class Server {
 
     private void createRoutes() {
 //        Spark.get("/hello", (req, res) -> "Hello World"); // Example
-        Spark.delete("/db", (req, res) -> { // clear() endpoint
-            return "Placeholder";
-        });
-        Spark.post("/user", (req, res) -> { // register() endpoint
-            return "Placeholder";
-        });
-        Spark.post("session", (req, res) -> { // login() endpoint
-            return "Placeholder";
-        });
-        Spark.delete("session", (req, res) -> { // logout() endpoint
-            return "Placeholder";
-        });
-        Spark.get("/game", (req, res) -> { // listGames() endpoint
-            return "Placeholder";
-        });
-        Spark.post("/game", (req, res) -> { // createGame() endpoint
-            return "Placeholder";
-        });
-        Spark.post("/game", (req, res) -> { // joinGame() endpoint
-            return "Placeholder";
-        });
-        Spark.notFound("<html><body><h1>404 Not Found</h1></body></html>");
+      Spark.delete("/db", this::clear);
+      Spark.post("/user", this::registerUser);
+      Spark.post("session", this::loginUser);
+      Spark.delete("session", this::logoutUser);
+      Spark.get("/game", this::listGames);
+      Spark.post("/game", this::createGame);
+      Spark.post("/game", this::joinGame);
+
+//      Spark.exception(ResponseException.class,this::exceptionHandler);
+      Spark.notFound("<html><body><h1>404 Not Found</h1></body></html>");
     }
+
+    private Object clear(Request req, Response res) {
+        return "Placeholder";
+    }
+
+    private Object registerUser(Request req, Response res) {
+        return "Placeholder";
+    }
+
+    private Object loginUser(Request req, Response res) {
+        return "Placeholder";
+    }
+
+    private Object logoutUser(Request req, Response res) {
+        return "Placeholder";
+    }
+
+    private Object listGames(Request req, Response res) {
+        return "Placeholder";
+    }
+
+    private Object createGame(Request req, Response res) {
+        return "Placeholder";
+    }
+
+    private Object joinGame(Request req, Response res) {
+        return "Placeholder";
+    }
+
 
     public void stop() {
         Spark.stop();
