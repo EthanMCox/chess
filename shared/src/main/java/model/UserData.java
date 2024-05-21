@@ -1,6 +1,6 @@
 package model;
 
-record UserData(String username, String password, String email) {
+public record UserData(String username, String password, String email) {
   public UserData updateUsername(String username) {
     return new UserData(username, this.password, this.email);
   }

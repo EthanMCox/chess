@@ -2,7 +2,7 @@ package model;
 
 import chess.ChessGame;
 
-record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+public record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
   public GameData updateGameID(int gameID) {
     return new GameData(gameID, this.whiteUsername, this.blackUsername, this.gameName, this.game);
   }

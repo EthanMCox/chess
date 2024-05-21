@@ -1,5 +1,5 @@
 package model;
-record AuthData(String authToken, String username) {
+public record AuthData(String authToken, String username) {
   public AuthData updateAuthToken(String authToken) {
     return new AuthData(authToken, this.username);
   }
