@@ -1,12 +1,22 @@
 package server;
 
 import exception.ExceptionResult;
+import service.*;
 import spark.*;
 import util.JsonSerializer;
 
 import java.util.Map;
 
 public class Server {
+    private final UserService userService;
+    private final GameService gameService;
+    private final ClearService clearService;
+
+    public Server(UserService userService, GameService gameService, ClearService clearService) {
+        this.userService = userService;
+        this.gameService = gameService;
+        this.clearService = clearService;
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
