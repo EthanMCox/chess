@@ -43,7 +43,11 @@ public class UserService {
     return new LoginResult(auth.username(), auth.authToken());
   }
   public SuccessResult logout(AuthRequest request) throws ExceptionResult{
-
+    AuthData auth = authDAO.getAuth(request.authToken());
+    if (auth == null) {
+      throw new ExceptionResult(401, "Error: unauthorized");
+    }
+    authDAO.deleteAuth(auth);
     return new SuccessResult();
   }
 }

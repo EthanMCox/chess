@@ -78,15 +78,14 @@ public class Server {
     }
 
     private Object logoutUser(Request req, Response res) throws ExceptionResult{
-        String authToken = req.headers("Authorization");
-        AuthRequest request = JsonSerializer.deserialize(req.body(), AuthRequest.class);
-        request = request.setAuthToken(authToken);
+        String authToken = req.headers("authorization");
+        AuthRequest request = new AuthRequest(authToken);
         SuccessResult result = userService.logout(request);
         return JsonSerializer.serialize(result);
     }
 
     private Object listGames(Request req, Response res) throws ExceptionResult{
-        String authToken = req.headers("Authorization");
+        String authToken = req.headers("authorization");
         AuthRequest request = JsonSerializer.deserialize(req.body(), AuthRequest.class);
         request = request.setAuthToken(authToken);
         ListGamesResult result = gameService.listGames(request);
@@ -94,7 +93,7 @@ public class Server {
     }
 
     private Object createGame(Request req, Response res) throws ExceptionResult{
-        String authToken = req.headers("Authorization");
+        String authToken = req.headers("authorization");
         CreateGameRequest request = JsonSerializer.deserialize(req.body(), CreateGameRequest.class);
         request = request.setAuthToken(authToken);
         CreateGameResult result = gameService.createGame(request);
@@ -102,7 +101,7 @@ public class Server {
     }
 
     private Object joinGame(Request req, Response res) throws ExceptionResult{
-        String authToken = req.headers("Authorization");
+        String authToken = req.headers("authorization");
         JoinGameRequest request = JsonSerializer.deserialize(req.body(), JoinGameRequest.class);
         request = request.setAuthToken(authToken);
         SuccessResult result = gameService.joinGame(request);
