@@ -27,8 +27,20 @@ public class UserService {
     AuthData auth = authDAO.createAuth(request.username());
     return new LoginResult(auth.username(), auth.authToken());
   }
+
+  private boolean passwordMatches(UserData user, String password) {
+    return user.password().equals(password);
+  }
   public LoginResult login(LoginRequest request) throws ExceptionResult {
-    return null;
+    UserData user = userDAO.getUser(request.username());
+    if (user == null) {
+      throw new ExceptionResult(401, "Error: unauthorized");
+    }
+    if (!passwordMatches(user, request.password())) {
+      throw new ExceptionResult(401, "Error: unauthorized");
+    }
+    AuthData auth = authDAO.createAuth(request.username());
+    return new LoginResult(auth.username(), auth.authToken());
   }
   public SuccessResult logout(AuthRequest request) throws ExceptionResult{
 
