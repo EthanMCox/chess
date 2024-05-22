@@ -3,6 +3,8 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.ExceptionResult;
+import model.AuthData;
+import model.UserData;
 import requests.LoginRequest;
 import requests.AuthRequest;
 import requests.RegisterRequest;
@@ -17,7 +19,13 @@ public class UserService {
     this.authDAO = authDAO;
   }
   public LoginResult register(RegisterRequest request) throws ExceptionResult {
-    return null;
+    UserData user = userDAO.getUser(request.username());
+    if (user != null) {
+      throw new ExceptionResult(403, "Error: already taken");
+    }
+    userDAO.createUser(request.username(), request.password(), request.email());
+    AuthData auth = authDAO.createAuth(request.username());
+    return new LoginResult(auth.username(), auth.authToken());
   }
   public LoginResult login(LoginRequest request) throws ExceptionResult {
     return null;
