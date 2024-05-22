@@ -27,8 +27,11 @@ public class GameService {
   }
 
   public CreateGameResult createGame(CreateGameRequest request) throws ExceptionResult{
-
-    return null;
+    AuthData auth = authDAO.getAuth(request.authToken());
+    if (auth == null) {
+      throw new ExceptionResult(401, "Error: unauthorized");
+    }
+    return new CreateGameResult(gameDAO.createGame(request.gameName()));
   }
 
   public SuccessResult joinGame(JoinGameRequest request) throws ExceptionResult{
