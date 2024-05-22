@@ -19,6 +19,9 @@ public class UserService {
     this.authDAO = authDAO;
   }
   public LoginResult register(RegisterRequest request) throws ExceptionResult {
+    if (request.username() == null || request.password() == null || request.email() == null) {
+      throw new ExceptionResult(400, "Error: bad request");
+    }
     UserData user = userDAO.getUser(request.username());
     if (user != null) {
       throw new ExceptionResult(403, "Error: already taken");
