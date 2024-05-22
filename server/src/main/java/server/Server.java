@@ -31,6 +31,10 @@ public class Server {
         return Spark.port();
     }
 
+    public int port() {
+        return Spark.port();
+    }
+
     private void createRoutes() {
       Spark.delete("/db", this::clear);
       Spark.post("/user", this::registerUser);
