@@ -86,8 +86,7 @@ public class Server {
 
     private Object listGames(Request req, Response res) throws ExceptionResult{
         String authToken = req.headers("authorization");
-        AuthRequest request = JsonSerializer.deserialize(req.body(), AuthRequest.class);
-        request = request.setAuthToken(authToken);
+        AuthRequest request = new AuthRequest(authToken);
         ListGamesResult result = gameService.listGames(request);
         return JsonSerializer.serialize(result);
     }

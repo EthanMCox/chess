@@ -1,6 +1,8 @@
 package service;
 
 import dataaccess.AuthDAO;
+import exception.ExceptionResult;
+import model.AuthData;
 import requests.AuthRequest;
 import requests.CreateGameRequest;
 import requests.JoinGameRequest;
@@ -16,17 +18,20 @@ public class GameService {
     this.authDAO = authDAO;
   }
 
-  public ListGamesResult listGames(AuthRequest request) {
+  public ListGamesResult listGames(AuthRequest request) throws ExceptionResult {
+    AuthData auth = authDAO.getAuth(request.authToken());
+    if (auth == null) {
+      throw new ExceptionResult(401, "Error: unauthorized");
+    }
+    return new ListGamesResult(gameDAO.listGames());
+  }
+
+  public CreateGameResult createGame(CreateGameRequest request) throws ExceptionResult{
 
     return null;
   }
 
-  public CreateGameResult createGame(CreateGameRequest request) {
-
-    return null;
-  }
-
-  public SuccessResult joinGame(JoinGameRequest request) {
+  public SuccessResult joinGame(JoinGameRequest request) throws ExceptionResult{
 
     return null;
   }
