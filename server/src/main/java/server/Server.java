@@ -13,8 +13,9 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
         createRoutes();
+
+        Spark.exception(ExceptionResult.class,this::exceptionHandler);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -23,13 +24,11 @@ public class Server {
     private void createRoutes() {
       Spark.delete("/db", this::clear);
       Spark.post("/user", this::registerUser);
-      Spark.post("session", this::loginUser);
-      Spark.delete("session", this::logoutUser);
+      Spark.post("/session", this::loginUser);
+      Spark.delete("/session", this::logoutUser);
       Spark.get("/game", this::listGames);
       Spark.post("/game", this::createGame);
-      Spark.post("/game", this::joinGame);
-
-      Spark.exception(ExceptionResult.class,this::exceptionHandler);
+      Spark.put("/game", this::joinGame);
       Spark.notFound("<html><body><h1>404 Error: Not Found</h1></body></html>");
     }
 
