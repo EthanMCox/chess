@@ -26,10 +26,5 @@ public class UserService {
 
     return new SuccessResult();
   }
-
-  public SuccessResult clearAllUsers() {
-    userDAO.clear();
-    return new SuccessResult();
-  }
 }
 
