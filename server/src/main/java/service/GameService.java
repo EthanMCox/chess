@@ -1,9 +1,9 @@
 package service;
 
 import dataaccess.AuthDAO;
+import requests.AuthRequest;
 import requests.CreateGameRequest;
 import requests.JoinGameRequest;
-import requests.ListGamesRequest;
 import results.*;
 import dataaccess.GameDAO;
 
@@ -16,7 +16,7 @@ public class GameService {
     this.authDAO = authDAO;
   }
 
-  public ListGamesResult listGames(ListGamesRequest request) {
+  public ListGamesResult listGames(AuthRequest request) {
 
     return null;
   }

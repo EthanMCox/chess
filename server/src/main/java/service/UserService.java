@@ -4,7 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.ExceptionResult;
 import requests.LoginRequest;
-import requests.LogoutRequest;
+import requests.AuthRequest;
 import requests.RegisterRequest;
 import results.*;
 
@@ -22,7 +22,7 @@ public class UserService {
   public LoginResult login(LoginRequest request) throws ExceptionResult {
     return null;
   }
-  public SuccessResult logout(LogoutRequest request) throws ExceptionResult{
+  public SuccessResult logout(AuthRequest request) throws ExceptionResult{
 
     return new SuccessResult();
   }
