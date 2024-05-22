@@ -1,5 +1,6 @@
 package service;
 
+import com.sun.net.httpserver.Authenticator;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
@@ -7,23 +8,30 @@ import model.UserData;
 import requests.LoginRequest;
 import requests.LogoutRequest;
 import requests.RegisterRequest;
+import results.*;
 
 public class UserService {
-  private UserDAO userDAO;
+  private final UserDAO userDAO;
   private AuthDAO authDAO;
 
   public UserService(UserDAO userDAO, AuthDAO authDAO) {
     this.userDAO = userDAO;
     this.authDAO = authDAO;
   }
-  public AuthData register(RegisterRequest request) {
+  public LoginResult register(RegisterRequest request) {
     return null;
   }
-  public AuthData login(LoginRequest request) {
+  public LoginResult login(LoginRequest request) {
     return null;
   }
-  public void logout(LogoutRequest request) {}
+  public SuccessResult logout(LogoutRequest request) {
+
+    return new SuccessResult();
+  }
+
+  public SuccessResult clearAllUsers() {
+    userDAO.clear();
+    return new SuccessResult();
+  }
 }
-public void deleteAllUsers() {
-  userDAO.clear();
-}
+
