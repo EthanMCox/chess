@@ -1,6 +1,11 @@
 package server;
 
+import dataaccess.inMemory.*;
+import dataaccess.*;
 import exception.ExceptionResult;
+import requests.*;
+import results.*;
+import results.SuccessResult;
 import service.*;
 import spark.*;
 import util.JsonSerializer;
@@ -11,6 +16,15 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
+
+    public Server() {
+        AuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+        this.userService = new UserService(userDAO, authDAO);
+        this.gameService = new GameService(gameDAO, authDAO);
+        this.clearService = new ClearService(userDAO, gameDAO, authDAO);
+    }
 
     public Server(UserService userService, GameService gameService, ClearService clearService) {
         this.userService = userService;
@@ -47,31 +61,44 @@ public class Server {
     }
 
     private Object clear(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        SuccessResult result = clearService.clearAll();
+        return JsonSerializer.serialize(result);
     }
 
     private Object registerUser(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        RegisterRequest request = JsonSerializer.deserialize(req.body(), RegisterRequest.class);
+        LoginResult result = userService.register(request);
+        return JsonSerializer.serialize(result);
     }
 
     private Object loginUser(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        LoginRequest request = JsonSerializer.deserialize(req.body(), LoginRequest.class);
+        LoginResult result = userService.login(request);
+        return JsonSerializer.serialize(result);
     }
 
     private Object logoutUser(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        LogoutRequest request = JsonSerializer.deserialize(req.body(), LogoutRequest.class);
+        SuccessResult result = userService.logout(request);
+        return JsonSerializer.serialize(result);
     }
 
     private Object listGames(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        ListGamesRequest request = JsonSerializer.deserialize(req.body(), ListGamesRequest.class);
+        ListGamesResult result = gameService.listGames(request);
+        return JsonSerializer.serialize(result);
     }
 
     private Object createGame(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        CreateGameRequest request = JsonSerializer.deserialize(req.body(), CreateGameRequest.class);
+        CreateGameResult result = gameService.createGame(request);
+        return JsonSerializer.serialize(result);
     }
 
     private Object joinGame(Request req, Response res) throws ExceptionResult{
-        return "Placeholder";
+        JoinGameRequest request = JsonSerializer.deserialize(req.body(), JoinGameRequest.class);
+        SuccessResult result = gameService.joinGame(request);
+        return JsonSerializer.serialize(result);
     }
 
     private void exceptionHandler(ExceptionResult ex, Request req, Response res) {
