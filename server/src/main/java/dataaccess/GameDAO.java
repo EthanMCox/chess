@@ -4,7 +4,7 @@ import model.GameData;
 
 import java.util.Collection;
 
-interface GameDAO {
+public interface GameDAO {
   void clear();
   void createGame(String gameName);
   GameData getGame(String gameId);

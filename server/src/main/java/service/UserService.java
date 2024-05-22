@@ -1,10 +1,8 @@
 package service;
 
-import com.sun.net.httpserver.Authenticator;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
-import model.AuthData;
-import model.UserData;
+import exception.ExceptionResult;
 import requests.LoginRequest;
 import requests.LogoutRequest;
 import requests.RegisterRequest;
@@ -18,13 +16,13 @@ public class UserService {
     this.userDAO = userDAO;
     this.authDAO = authDAO;
   }
-  public LoginResult register(RegisterRequest request) {
+  public LoginResult register(RegisterRequest request) throws ExceptionResult {
     return null;
   }
-  public LoginResult login(LoginRequest request) {
+  public LoginResult login(LoginRequest request) throws ExceptionResult {
     return null;
   }
-  public SuccessResult logout(LogoutRequest request) {
+  public SuccessResult logout(LogoutRequest request) throws ExceptionResult{
 
     return new SuccessResult();
   }
