@@ -1,5 +1,5 @@
 import dataaccess.*;
-import dataaccess.inMemory.*;
+import dataaccess.inmemory.*;
 import service.*;
 import server.Server;
 

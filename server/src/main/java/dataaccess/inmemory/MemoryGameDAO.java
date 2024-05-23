@@ -1,12 +1,11 @@
-package dataaccess.inMemory;
+package dataaccess.inmemory;
 
 import chess.ChessGame;
 import dataaccess.GameDAO;
 import model.*;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class MemoryGameDAO implements GameDAO {
   private int nextId = 1;
@@ -36,6 +35,6 @@ public class MemoryGameDAO implements GameDAO {
 
   @Override
   public Collection<GameData> listGames() {
-    return new ArrayList<>(games.values());
+    return new HashSet<>(games.values());
   }
 }

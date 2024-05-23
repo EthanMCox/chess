@@ -1,6 +1,6 @@
 package server;
 
-import dataaccess.inMemory.*;
+import dataaccess.inmemory.*;
 import dataaccess.*;
 import exception.ExceptionResult;
 import requests.*;
@@ -108,7 +108,7 @@ public class Server {
     }
 
     private void exceptionHandler(ExceptionResult ex, Request req, Response res) {
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         Map<String, String> errorResponse = Map.of("message", ex.getMessage());
         res.body(JsonSerializer.serialize(errorResponse));
     }

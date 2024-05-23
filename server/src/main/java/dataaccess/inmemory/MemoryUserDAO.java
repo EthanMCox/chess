@@ -1,4 +1,4 @@
-package dataaccess.inMemory;
+package dataaccess.inmemory;
 
 import model.UserData;
 
