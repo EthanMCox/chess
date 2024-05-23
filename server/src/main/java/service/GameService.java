@@ -37,6 +37,9 @@ public class GameService {
   }
 
   public SuccessResult joinGame(JoinGameRequest request) throws ExceptionResult{
+    if (request.playerColor() == null || request.gameID() == null  || request.authToken() == null) {
+      throw new ExceptionResult(400, "Error: bad request");
+    }
     AuthData auth = authDAO.getAuth(request.authToken());
     if (auth == null) {
       throw new ExceptionResult(401, "Error: unauthorized");
