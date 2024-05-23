@@ -4,10 +4,6 @@ import service.*;
 import server.Server;
 
 public class Main {
-    private static final AuthDAO authDAO = new MemoryAuthDAO();
-    private static final UserDAO userDAO = new MemoryUserDAO();
-    private static final GameDAO gameDAO = new MemoryGameDAO();
-
 
     public static void main(String[] args) {
         try {
@@ -15,6 +11,9 @@ public class Main {
             if (args.length >= 1) {
                 port = Integer.parseInt(args[0]);
             }
+            var userDAO = new MemoryUserDAO();
+            var gameDAO = new MemoryGameDAO();
+            var authDAO = new MemoryAuthDAO();
             var clearService = new ClearService(userDAO, gameDAO, authDAO);
             var gameService = new GameService(gameDAO, authDAO);
             var userService = new UserService(userDAO, authDAO);
