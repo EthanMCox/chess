@@ -83,6 +83,28 @@ public class ServiceTests {
     ExceptionResult expected = new ExceptionResult(403, "Error: already taken");
     assertEquals(expected, actual);
   }
+
+  @Test
+  @DisplayName("Valid login")
+  void loginValid() throws ExceptionResult {
+    registerValid();
+    LoginRequest request = new LoginRequest("testUser", "1234");
+    LoginResult expected = new LoginResult("testUser", "authToken");
+    LoginResult actual = userService.login(request);
+    assertEquals(expected.username(), actual.username());
+    assertNotNull(actual.authToken());
+    assertInstanceOf(LoginResult.class, actual);
+  }
+
+  @Test
+  @DisplayName("invalid password at login")
+  void loginInvalidPassword() throws ExceptionResult {
+    registerValid();
+    LoginRequest request = new LoginRequest("testUser", "5678");
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> userService.login(request));
+    ExceptionResult expected = new ExceptionResult(401, "Error: unauthorized");
+    assertEquals(expected, actual);
+  }
 }
 
 
