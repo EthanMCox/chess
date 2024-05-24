@@ -202,8 +202,42 @@ public class ServiceTests {
   @DisplayName("Valid game joining")
   void joinGameValid() throws ExceptionResult {
     RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    CreateGameRequest createGameRequest = new CreateGameRequest("testGame", loginResult.authToken());
+    CreateGameResult createGameResult = gameService.createGame(createGameRequest);
+    JoinGameRequest request = new JoinGameRequest(loginResult.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID());
+    SuccessResult expected = new SuccessResult();
+    SuccessResult actual = gameService.joinGame(request);
+    assertEquals(expected, actual);
+  }
 
+  @Test
+  @DisplayName("null playerColor at joinGame")
+  void joinGameNullPlayerColor() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    CreateGameRequest createGameRequest = new CreateGameRequest("testGame", loginResult.authToken());
+    CreateGameResult createGameResult = gameService.createGame(createGameRequest);
+    JoinGameRequest request = new JoinGameRequest(loginResult.authToken(), null, createGameResult.gameID());
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> gameService.joinGame(request));
+    ExceptionResult expected = new ExceptionResult(400, "Error: bad request");
+    assertEquals(expected, actual);
+  }
 
+  @Test
+  @DisplayName("blackUsername already taken at joinGame")
+  void joinGameBlackUsernameTaken() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    CreateGameRequest createGameRequest = new CreateGameRequest("testGame", loginResult.authToken());
+    CreateGameResult createGameResult = gameService.createGame(createGameRequest);
+    LoginResult secondAuth = userService.register(new RegisterRequest("testUser2", "5678", "anotheremail@byu.edu"));
+    gameService.joinGame(new JoinGameRequest(secondAuth.authToken(), ChessGame.TeamColor.BLACK, createGameResult.gameID()));
+    JoinGameRequest request = new JoinGameRequest(loginResult.authToken(), ChessGame.TeamColor.BLACK, createGameResult.gameID());
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> gameService.joinGame(request));
+    ExceptionResult expected = new ExceptionResult(403, "Error: already taken");
+    assertEquals(expected, actual);
+  }
 }
 
 
