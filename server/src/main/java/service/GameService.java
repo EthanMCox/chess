@@ -21,6 +21,9 @@ public class GameService {
   }
 
   public ListGamesResult listGames(AuthRequest request) throws ExceptionResult {
+    if (request.authToken() == null) {
+      throw new ExceptionResult(400, "Error: bad request");
+    }
     AuthData auth = authDAO.getAuth(request.authToken());
     if (auth == null) {
       throw new ExceptionResult(401, "Error: unauthorized");

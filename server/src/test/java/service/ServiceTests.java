@@ -14,6 +14,8 @@ import results.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -163,21 +165,45 @@ public class ServiceTests {
     assertEquals(expected, actual);
   }
 
-//  @Test
-//  @DisplayName("Valid game listing")
-//  void listGamesValid() throws ExceptionResult {
-//    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
-//    LoginResult loginResult = userService.register(registerRequest);
-//    CreateGameRequest createGameRequest = new CreateGameRequest("testGame", loginResult.authToken());
-//    gameService.createGame(createGameRequest);
-//    AuthRequest request
-//            = new AuthRequest(loginResult.authToken());
-//    Collection<Object> gameList = new ArrayList<>();
-////    gameList.add({1, null, null, "testGame"});
-//    ListGamesResult expected = new ListGamesResult(gameList);
-//    ListGamesResult actual = gameService.listGames(request);
-//    assertEquals(expected, actual);
-//  }
+  @Test
+  @DisplayName("Valid game listing")
+  void listGamesValid() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    CreateGameRequest createGameRequest = new CreateGameRequest("testGame", loginResult.authToken());
+    gameService.createGame(createGameRequest);
+    AuthRequest request = new AuthRequest(loginResult.authToken());
+    Collection<ListGamesData> gameList = new HashSet<>();
+    gameList.add(new ListGamesData(1, null, null, "testGame"));
+    ListGamesResult expected = new ListGamesResult(gameList);
+    ListGamesResult actual = gameService.listGames(request);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  @DisplayName("null authToken at listGames")
+  void listGamesNullAuthToken() {
+    AuthRequest request = new AuthRequest(null);
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> gameService.listGames(request));
+    ExceptionResult expected = new ExceptionResult(400, "Error: bad request");
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  @DisplayName("Wrong authToken at ListGames")
+  void listGamesBadAuthToken() throws ExceptionResult {
+    AuthRequest request = new AuthRequest("badAuthToken");
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> gameService.listGames(request));
+    ExceptionResult expected = new ExceptionResult(401, "Error: unauthorized");
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  @DisplayName("Valid game joining")
+  void joinGameValid() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+
+
 }
 
 
