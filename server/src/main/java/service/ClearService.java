@@ -20,13 +20,13 @@ public class ClearService {
     clearAllUsers();
     return new SuccessResult();
   }
-  public void clearAllAuths() throws ExceptionResult{
+  private void clearAllAuths() throws ExceptionResult{
     authDAO.clear();
   }
-  public void clearAllGames() throws ExceptionResult{
+  private void clearAllGames() throws ExceptionResult{
     gameDAO.clear();
   }
-  public void clearAllUsers() throws ExceptionResult{
+  private void clearAllUsers() throws ExceptionResult{
     userDAO.clear();
   }
 }
