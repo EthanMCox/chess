@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.inmemory.*;
 import exception.ExceptionResult;
 import model.*;
@@ -10,6 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import requests.*;
 import results.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
@@ -148,6 +153,31 @@ public class ServiceTests {
     ExceptionResult expected = new ExceptionResult(400, "Error: bad request");
     assertEquals(expected, actual);
   }
+
+  @Test
+  @DisplayName("null authToken at createGame")
+  void createGameNullAuthToken() throws ExceptionResult {
+    CreateGameRequest request = new CreateGameRequest("testGame", null);
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> gameService.createGame(request));
+    ExceptionResult expected = new ExceptionResult(400, "Error: bad request");
+    assertEquals(expected, actual);
+  }
+
+//  @Test
+//  @DisplayName("Valid game listing")
+//  void listGamesValid() throws ExceptionResult {
+//    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+//    LoginResult loginResult = userService.register(registerRequest);
+//    CreateGameRequest createGameRequest = new CreateGameRequest("testGame", loginResult.authToken());
+//    gameService.createGame(createGameRequest);
+//    AuthRequest request
+//            = new AuthRequest(loginResult.authToken());
+//    Collection<Object> gameList = new ArrayList<>();
+////    gameList.add({1, null, null, "testGame"});
+//    ListGamesResult expected = new ListGamesResult(gameList);
+//    ListGamesResult actual = gameService.listGames(request);
+//    assertEquals(expected, actual);
+//  }
 }
 
 

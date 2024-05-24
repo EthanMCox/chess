@@ -3,9 +3,8 @@ package dataaccess.inmemory;
 import chess.ChessGame;
 import dataaccess.GameDAO;
 import model.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO {
   private int nextId = 1;
@@ -34,7 +33,11 @@ public class MemoryGameDAO implements GameDAO {
   }
 
   @Override
-  public Collection<GameData> listGames() {
-    return new HashSet<>(games.values());
+  public Collection<ListGamesData> listGames() {
+    Collection<ListGamesData> listGamesData = new HashSet<>();
+    for (GameData gameData : games.values()) {
+      listGamesData.add(new ListGamesData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName()));
+    }
+    return listGamesData;
   }
 }
