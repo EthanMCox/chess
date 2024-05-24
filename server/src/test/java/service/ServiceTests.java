@@ -105,6 +105,49 @@ public class ServiceTests {
     ExceptionResult expected = new ExceptionResult(401, "Error: unauthorized");
     assertEquals(expected, actual);
   }
+
+  @Test
+  @DisplayName("Valid logout")
+  void logoutValid() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    AuthRequest request = new AuthRequest(loginResult.authToken());
+    SuccessResult expected = new SuccessResult();
+    SuccessResult actual = userService.logout(request);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  @DisplayName("Wrong authToken at logout")
+  void logoutBadAuthToken() throws ExceptionResult {
+    AuthRequest request = new AuthRequest("badAuthToken");
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> userService.logout(request));
+    ExceptionResult expected = new ExceptionResult(401, "Error: unauthorized");
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  @DisplayName("Valid game creation")
+  void createGameValid() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    CreateGameRequest request = new CreateGameRequest("testGame", loginResult.authToken());
+    CreateGameResult expected = new CreateGameResult(1);
+    CreateGameResult actual = gameService.createGame(request);
+    assertEquals(expected.gameID(), actual.gameID());
+    assertInstanceOf(CreateGameResult.class, actual);
+  }
+
+  @Test
+  @DisplayName("null gameName at createGame")
+  void createGameNullGameName() throws ExceptionResult {
+    RegisterRequest registerRequest = new RegisterRequest("testUser", "1234", "someone@byu.edu");
+    LoginResult loginResult = userService.register(registerRequest);
+    CreateGameRequest request = new CreateGameRequest(null, loginResult.authToken());
+    ExceptionResult actual = assertThrows(ExceptionResult.class, () -> gameService.createGame(request));
+    ExceptionResult expected = new ExceptionResult(400, "Error: bad request");
+    assertEquals(expected, actual);
+  }
 }
 
 

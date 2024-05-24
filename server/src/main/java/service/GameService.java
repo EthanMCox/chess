@@ -29,6 +29,9 @@ public class GameService {
   }
 
   public CreateGameResult createGame(CreateGameRequest request) throws ExceptionResult{
+    if (request.gameName() == null || request.authToken() == null) {
+      throw new ExceptionResult(400, "Error: bad request");
+    }
     AuthData auth = authDAO.getAuth(request.authToken());
     if (auth == null) {
       throw new ExceptionResult(401, "Error: unauthorized");
