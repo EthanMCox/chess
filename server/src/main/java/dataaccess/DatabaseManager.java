@@ -34,7 +34,7 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+    public static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
@@ -58,13 +58,56 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
+    public static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             conn.setCatalog(DATABASE_NAME);
             return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+
+
+
+    public static void createTables(Connection conn) throws DataAccessException {
+        String[] createStatements = {
+                """
+            CREATE TABLE IF NOT EXISTS user (
+              `username` VARCHAR(255) NOT NULL,
+              `password` VARCHAR(255) NOT NULL,
+              `email` VARCHAR(255) NOT NULL,
+              PRIMARY KEY (`username`),
+              INDEX(password)
+            )
+            """,
+                """
+            CREATE TABLE IF NOT EXISTS game (
+              `gameID` INT NOT NULL AUTO_INCREMENT,
+              `whiteUsername` VARCHAR(255),
+              `blackUsername` VARCHAR(255),
+              `gameName` TEXT NOT NULL,
+              `game` TEXT NOT NULL,
+              INDEX(whiteUsername),
+              INDEX(blackUsername),
+              INDEX(gameName),
+              PRIMARY KEY (`gameID`),
+            )
+            """,
+                """
+            CREATE TABLE IF NOT EXISTS auth (
+              `username` VARCHAR(255) NOT NULL,
+              `authToken` VARCHAR(255) NOT NULL,
+              INDEX(authToken),
+              PRIMARY KEY (`username`)
+            """
+        };
+        for (var statement: createStatements) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                throw new DataAccessException(e.getMessage());
+            }
         }
     }
 }
