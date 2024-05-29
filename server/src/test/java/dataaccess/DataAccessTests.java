@@ -60,8 +60,6 @@ public class DataAccessTests {
   }
 
 
-
-
   @ParameterizedTest
   @ValueSource(classes = {MySQLAuthDAO.class, MemoryAuthDAO.class})
   @DisplayName("authClear succeeds")
@@ -95,5 +93,14 @@ public class DataAccessTests {
     AuthData authData = authDAO.createAuth("testUsername");
     assertDoesNotThrow(() -> authDAO.deleteAuth(authData));
   }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLAuthDAO.class, MemoryAuthDAO.class})
+  @DisplayName("Delete Auth Fails because authData is null")
+  void deleteAuthFailure(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
+    AuthDAO authDAO = getAuthDAO(authDAOClass);
+    assertThrows(ExceptionResult.class, () -> authDAO.deleteAuth(null));
+  }
+
 
 }

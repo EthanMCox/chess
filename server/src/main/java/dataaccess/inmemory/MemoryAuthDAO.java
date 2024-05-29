@@ -29,7 +29,10 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void deleteAuth(AuthData authData) {
+    public void deleteAuth(AuthData authData) throws ExceptionResult {
+        if (authData == null) {
+            throw new ExceptionResult(400, "bad request");
+        }
         auths.remove(authData.authToken());
     }
 }

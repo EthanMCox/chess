@@ -51,7 +51,9 @@ public class MySQLAuthDAO implements AuthDAO {
 
   @Override
   public void deleteAuth(AuthData authData) throws ExceptionResult {
-
+    var statement = "DELETE FROM auth WHERE authToken=?";
+    if (authData == null) throw new ExceptionResult(400, "bad request");
+    executeUpdate(statement, authData.authToken());
   }
 
   private int executeUpdate(String statement, Object... params) throws ExceptionResult {
