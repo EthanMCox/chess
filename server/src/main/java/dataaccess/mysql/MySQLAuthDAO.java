@@ -19,11 +19,15 @@ public class MySQLAuthDAO implements AuthDAO {
   @Override
   public void clear() throws ExceptionResult {
     var statement = "TRUNCATE TABLE auth";
+    executeUpdate(statement);
   }
 
   @Override
   public AuthData createAuth(String username) throws ExceptionResult {
-    return null;
+    var statement = "INSERT INTO auth (username, authToken) VALUES (?, ?)";
+    var authToken = generateAuthToken();
+    executeUpdate(statement, username, authToken);
+    return new AuthData(authToken, username);
   }
 
   @Override
