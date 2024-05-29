@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.inmemory.*;
+import dataaccess.mysql.*;
 import exception.ExceptionResult;
 import model.*;
 import dataaccess.*;
@@ -27,9 +28,16 @@ public class ServiceTests {
 
   @BeforeAll
   static void setUp() {
-    AuthDAO authDAO = new MemoryAuthDAO();
-    UserDAO userDAO = new MemoryUserDAO();
-    GameDAO gameDAO = new MemoryGameDAO();
+    AuthDAO authDAO = new MySQLAuthDAO();
+    UserDAO userDAO = new MySQLUserDAO();
+    GameDAO gameDAO = new MySQLGameDAO();
+    try {
+      DatabaseManager.configureDataBase();
+    } catch (ExceptionResult | DataAccessException ex) {
+      authDAO = new MemoryAuthDAO();
+      userDAO = new MemoryUserDAO();
+      gameDAO = new MemoryGameDAO();
+    }
     userService = new UserService(userDAO, authDAO);
     gameService = new GameService(gameDAO, authDAO);
     clearService = new ClearService(userDAO, gameDAO, authDAO);
