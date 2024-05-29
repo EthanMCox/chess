@@ -1,6 +1,7 @@
 package dataaccess.inmemory;
 
 import dataaccess.AuthDAO;
+import exception.ExceptionResult;
 import model.AuthData;
 
 import java.util.HashMap;
@@ -13,7 +14,10 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData createAuth(String username) {
+    public AuthData createAuth(String username) throws ExceptionResult {
+        if (username == null) {
+            throw new ExceptionResult(400, "Username cannot be null");
+        }
         String authToken = generateAuthToken();
         auths.put(authToken, new AuthData(authToken, username));
         return new AuthData(authToken, username);

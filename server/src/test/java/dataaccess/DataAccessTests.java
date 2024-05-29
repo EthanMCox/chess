@@ -3,6 +3,7 @@ package dataaccess;
 import dataaccess.mysql.*;
 import dataaccess.inmemory.*;
 import exception.ExceptionResult;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import model.*;
@@ -45,10 +46,21 @@ public class DataAccessTests {
 
   @ParameterizedTest
   @ValueSource(classes = {MySQLAuthDAO.class, MemoryAuthDAO.class})
-  void createAuth(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
+  @DisplayName("Create Auth Success")
+  void createAuthSuccess(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
     AuthDAO authDAO = getAuthDAO(authDAOClass);
     assertDoesNotThrow(() -> assertInstanceOf(AuthData.class,authDAO.createAuth("testUsername")));
   }
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLAuthDAO.class, MemoryAuthDAO.class})
+  @DisplayName("Null username at create auth")
+  void createAuthFailure(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
+    AuthDAO authDAO = getAuthDAO(authDAOClass);
+    assertThrows(ExceptionResult.class, () -> authDAO.createAuth(null));
+  }
+
+
+
 
   @ParameterizedTest
   @ValueSource(classes = {MySQLAuthDAO.class, MemoryAuthDAO.class})
