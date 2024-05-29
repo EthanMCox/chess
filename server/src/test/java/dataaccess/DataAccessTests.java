@@ -64,9 +64,36 @@ public class DataAccessTests {
 
   @ParameterizedTest
   @ValueSource(classes = {MySQLAuthDAO.class, MemoryAuthDAO.class})
+  @DisplayName("authClear succeeds")
   void authClear(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
     AuthDAO authDAO = getAuthDAO(authDAOClass);
     assertDoesNotThrow(authDAO::clear);
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Get auth succeeds")
+  void getAuthSuccess(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
+    AuthDAO authDAO = getAuthDAO(authDAOClass);
+    AuthData authData = authDAO.createAuth("testUsername");
+    assertDoesNotThrow(() -> assertInstanceOf(AuthData.class, authDAO.getAuth(authData.authToken())));
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("No matching auth found")
+  void getAuthDoesNotMatch(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
+    AuthDAO authDAO = getAuthDAO(authDAOClass);
+    assertDoesNotThrow(() -> assertNull(authDAO.getAuth("testAuthToken")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Delete Auth Success")
+  void deleteAuthSuccess(Class<? extends AuthDAO> authDAOClass) throws ExceptionResult {
+    AuthDAO authDAO = getAuthDAO(authDAOClass);
+    AuthData authData = authDAO.createAuth("testUsername");
+    assertDoesNotThrow(() -> authDAO.deleteAuth(authData));
   }
 
 }
