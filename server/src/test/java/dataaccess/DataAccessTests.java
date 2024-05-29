@@ -102,5 +102,13 @@ public class DataAccessTests {
     assertThrows(ExceptionResult.class, () -> authDAO.deleteAuth(null));
   }
 
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Clear User Success")
+  void clearUserSuccess(Class<? extends UserDAO> userDAOClass) throws ExceptionResult {
+    UserDAO userDAO = getUserDAO(userDAOClass);
+    assertDoesNotThrow(userDAO::clear);
+  }
+
 
 }
