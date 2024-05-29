@@ -74,7 +74,7 @@ public class DatabaseManager {
 
     public static void createTables(Connection conn) throws DataAccessException {
         String[] createStatements = {
-                """
+            """
             CREATE TABLE IF NOT EXISTS user (
               `username` VARCHAR(255) NOT NULL,
               `password` VARCHAR(255) NOT NULL,
@@ -83,7 +83,7 @@ public class DatabaseManager {
               INDEX(password)
             )
             """,
-                """
+            """
             CREATE TABLE IF NOT EXISTS game (
               `gameID` INT NOT NULL AUTO_INCREMENT,
               `whiteUsername` VARCHAR(255),
