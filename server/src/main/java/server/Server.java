@@ -2,6 +2,7 @@ package server;
 
 
 import dataaccess.*;
+import dataaccess.inmemory.*;
 import dataaccess.mysql.*;
 import exception.ExceptionResult;
 import requests.*;
@@ -15,33 +16,41 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class Server {
-    private final UserService userService;
-    private final GameService gameService;
-    private final ClearService clearService;
+    private UserService userService;
+    private GameService gameService;
+    private ClearService clearService;
 
     public Server() {
-        AuthDAO authDAO = new MySQLAuthDAO();
-        UserDAO userDAO = new MySQLUserDAO();
-        GameDAO gameDAO = new MySQLGameDAO();
-        this.userService = new UserService(userDAO, authDAO);
-        this.gameService = new GameService(gameDAO, authDAO);
-        this.clearService = new ClearService(userDAO, gameDAO, authDAO);
-
+        try {
+            setUpServices();
+        } catch (ExceptionResult | DataAccessException e) {
+          throw new RuntimeException(e);
+        }
     }
 
-    public Server(UserService userService, GameService gameService, ClearService clearService) {
+    public Server(UserService userService, GameService gameService, ClearService clearService)  {
         this.userService = userService;
         this.gameService = gameService;
         this.clearService = clearService;
     }
 
-    private void configureDataBase() throws DataAccessException, ExceptionResult {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            DatabaseManager.createTables(conn);
-        } catch (SQLException ex) {
-            throw new ExceptionResult(500, String.format("Unable to configure database: %s", ex.getMessage()));
+    private void setUpServices() throws ExceptionResult, DataAccessException {
+        AuthDAO authDAO;
+        UserDAO userDAO;
+        GameDAO gameDAO;
+        try {
+            authDAO = new MySQLAuthDAO();
+            userDAO = new MySQLUserDAO();
+            gameDAO = new MySQLGameDAO();
+            DatabaseManager.configureDataBase();
+        } catch (ExceptionResult | DataAccessException ex) {
+            authDAO = new MemoryAuthDAO();
+            userDAO = new MemoryUserDAO();
+            gameDAO = new MemoryGameDAO();
         }
+        this.userService = new UserService(userDAO, authDAO);
+        this.gameService = new GameService(gameDAO, authDAO);
+        this.clearService = new ClearService(userDAO, gameDAO, authDAO);
     }
 
     public int run(int desiredPort) {

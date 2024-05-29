@@ -6,6 +6,9 @@ import model.AuthData;
 
 public class MySQLAuthDAO implements AuthDAO {
 
+  public MySQLAuthDAO() {
+  }
+
   @Override
   public void clear() throws ExceptionResult {
 
