@@ -92,16 +92,16 @@ public class DatabaseManager {
               `game` TEXT NOT NULL,
               INDEX(whiteUsername),
               INDEX(blackUsername),
-              INDEX(gameName),
               PRIMARY KEY (`gameID`)
             )
             """,
-                """
+            """
             CREATE TABLE IF NOT EXISTS auth (
               `username` VARCHAR(255) NOT NULL,
               `authToken` VARCHAR(255) NOT NULL,
               INDEX(authToken),
               PRIMARY KEY (`username`)
+              )
             """
         };
         for (var statement: createStatements) {
