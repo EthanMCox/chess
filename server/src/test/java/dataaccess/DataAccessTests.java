@@ -110,5 +110,40 @@ public class DataAccessTests {
     assertDoesNotThrow(userDAO::clear);
   }
 
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Create User Success")
+  void createUserSuccess(Class<? extends UserDAO> userDAOClass) throws ExceptionResult {
+    UserDAO userDAO = getUserDAO(userDAOClass);
+    assertDoesNotThrow(() -> userDAO.createUser("testUsername", "testPassword", "testEmail"));
+  }
 
+  @ParameterizedTest
+  @DisplayName("password value is null when creating user")
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  void createUserFailure(Class<? extends UserDAO> userDAOClass) throws ExceptionResult {
+    UserDAO userDAO = getUserDAO(userDAOClass);
+    assertThrows(ExceptionResult.class, () -> userDAO.createUser("testUsername", null, "testEmail"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Get user Success")
+  void getUserSuccess(Class<? extends UserDAO> userDAOClass) throws ExceptionResult {
+    UserDAO userDAO = getUserDAO(userDAOClass);
+    userDAO.createUser("testUsername", "testPassword", "testEmail");
+    assertDoesNotThrow(() -> assertInstanceOf(UserData.class, userDAO.getUser("testUsername")));
+    UserData userData = userDAO.getUser("testUsername");
+    assertEquals("testUsername", userData.username());
+    assertEquals("testPassword", userData.password());
+    assertEquals("testEmail", userData.email());
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("No matching user found")
+  void getUserDoesNotMatch(Class<? extends UserDAO> userDAOClass) throws ExceptionResult {
+    UserDAO userDAO = getUserDAO(userDAOClass);
+    assertDoesNotThrow(() -> assertNull(userDAO.getUser("testUsername")));
+  }
 }
