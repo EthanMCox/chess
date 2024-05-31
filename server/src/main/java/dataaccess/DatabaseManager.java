@@ -88,8 +88,8 @@ public class DatabaseManager {
               `gameID` INT NOT NULL AUTO_INCREMENT,
               `whiteUsername` VARCHAR(255),
               `blackUsername` VARCHAR(255),
-              `gameName` TEXT NOT NULL,
-              `game` TEXT NOT NULL,
+              `gameName` VARCHAR(255) NOT NULL,
+              `game` LONGTEXT NOT NULL,
               INDEX(whiteUsername),
               INDEX(blackUsername),
               PRIMARY KEY (`gameID`)
