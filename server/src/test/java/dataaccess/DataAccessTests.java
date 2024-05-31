@@ -8,6 +8,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import model.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DataAccessTests {
@@ -186,5 +190,22 @@ public class DataAccessTests {
   void getGameDoesNotMatch(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
     GameDAO gameDAO = getGameDAO(gameDAOClass);
     assertDoesNotThrow(() -> assertNull(gameDAO.getGame(1)));
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("List Games Success")
+  void listGamesSuccess(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    Collection<ListGamesData> expected = new HashSet<>();
+    expected.add(new ListGamesData(1, null, null, "testGameName"));
+    expected.add(new ListGamesData(2, null, null, "testGameName2"));
+    expected.add(new ListGamesData(3, null, null, "testGameName3"));
+    gameDAO.createGame("testGameName");
+    gameDAO.createGame("testGameName2");
+    gameDAO.createGame("testGameName3");
+    Collection<ListGamesData> actual = gameDAO.listGames();
+    assertEquals(expected.size(), actual.size());
+    assertEquals(expected, actual);
   }
 }
