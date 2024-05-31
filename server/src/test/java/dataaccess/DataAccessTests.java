@@ -170,4 +170,21 @@ public class DataAccessTests {
     GameDAO gameDAO = getGameDAO(gameDAOClass);
     assertThrows(ExceptionResult.class, () -> gameDAO.createGame(null));
   }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("Get Game Success")
+  void getGameSuccess(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    int gameId = gameDAO.createGame("testGameName");
+    assertDoesNotThrow(() -> assertInstanceOf(GameData.class, gameDAO.getGame(gameId)));
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("No matching game found")
+  void getGameDoesNotMatch(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    assertDoesNotThrow(() -> assertNull(gameDAO.getGame(1)));
+  }
 }
