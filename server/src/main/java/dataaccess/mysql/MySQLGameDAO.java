@@ -21,7 +21,9 @@ public class MySQLGameDAO extends SQLUpdateExecutor implements GameDAO {
 
   @Override
   public int createGame(String gameName) throws ExceptionResult {
-    return 0;
+    var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+    String game = JsonSerializer.serialize((new ChessGame()));
+    return executeUpdate(statement, null, null, gameName, game);
   }
 
   @Override
