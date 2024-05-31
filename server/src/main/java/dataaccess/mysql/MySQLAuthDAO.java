@@ -24,10 +24,37 @@ public class MySQLAuthDAO extends SQLUpdateExecutor implements AuthDAO {
 
   @Override
   public AuthData createAuth(String username) throws ExceptionResult {
-    var statement = "INSERT INTO auth (username, authToken) VALUES (?, ?)";
-    var authToken = generateAuthToken();
-    executeUpdate(statement, username, authToken);
-    return new AuthData(authToken, username);
+    if (getAuthUser(username) == null) {
+      var statement = "INSERT INTO auth (username, authToken) VALUES (?, ?)";
+      var authToken = generateAuthToken();
+
+      executeUpdate(statement, username, authToken);
+      return new AuthData(authToken, username);
+    } else { // If user already exists, replace the authToken
+      var statement = "UPDATE auth SET authToken=? WHERE username=?";
+      var authToken = generateAuthToken();
+
+      executeUpdate(statement, authToken, username);
+      return new AuthData(authToken, username);
+    }
+  }
+
+  private AuthData getAuthUser(String username) throws ExceptionResult {
+    try (var conn = DatabaseManager.getConnection()) {
+      var statement = "SELECT username, authToken FROM auth WHERE username=?";
+      try (var stmt = conn.prepareStatement(statement)) {
+        stmt.setString(1, username);
+        try (var rs = stmt.executeQuery()) {
+          if (rs.next()) {
+            return new AuthData(rs.getString("authToken"), username);
+          } else {
+            return null;
+          }
+        }
+      }
+    } catch (SQLException | DataAccessException e) {
+      throw new ExceptionResult(500, String.format("unable to read database: %s", e.getMessage()));
+    }
   }
 
   @Override
