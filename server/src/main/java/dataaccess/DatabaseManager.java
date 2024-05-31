@@ -99,8 +99,8 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS auth (
               `username` VARCHAR(255) NOT NULL,
               `authToken` VARCHAR(255) NOT NULL,
-              INDEX(authToken),
-              PRIMARY KEY (`username`)
+              INDEX(username),
+              PRIMARY KEY (`authToken`)
               )
             """
         };

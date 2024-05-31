@@ -24,19 +24,11 @@ public class MySQLAuthDAO extends SQLUpdateExecutor implements AuthDAO {
 
   @Override
   public AuthData createAuth(String username) throws ExceptionResult {
-    if (getAuthUser(username) == null) {
       var statement = "INSERT INTO auth (username, authToken) VALUES (?, ?)";
       var authToken = generateAuthToken();
 
       executeUpdate(statement, username, authToken);
       return new AuthData(authToken, username);
-    } else { // If user already exists, replace the authToken
-      var statement = "UPDATE auth SET authToken=? WHERE username=?";
-      var authToken = generateAuthToken();
-
-      executeUpdate(statement, authToken, username);
-      return new AuthData(authToken, username);
-    }
   }
 
   private AuthData getAuthUser(String username) throws ExceptionResult {

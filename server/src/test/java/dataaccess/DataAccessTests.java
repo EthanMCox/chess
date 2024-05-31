@@ -146,4 +146,20 @@ public class DataAccessTests {
     UserDAO userDAO = getUserDAO(userDAOClass);
     assertDoesNotThrow(() -> assertNull(userDAO.getUser("testUsername")));
   }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("Clear Game Success")
+  void clearGameSuccess(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    assertDoesNotThrow(gameDAO::clear);
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("Create Game Success")
+  void createGameSuccess(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    assertDoesNotThrow(() -> gameDAO.createGame("testGameName"));
+  }
 }
