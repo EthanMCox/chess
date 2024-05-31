@@ -11,6 +11,7 @@ import util.JsonSerializer;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class MySQLGameDAO extends SQLUpdateExecutor implements GameDAO {
   @Override
@@ -48,7 +49,20 @@ public class MySQLGameDAO extends SQLUpdateExecutor implements GameDAO {
 
   @Override
   public Collection<ListGamesData> listGames() throws ExceptionResult {
-    return null;
+    Collection<ListGamesData> listGamesData = new HashSet<>();
+    try (var conn = DatabaseManager.getConnection()) {
+      var statement = "SELECT gameId, whiteUsername, blackUsername, gameName FROM game";
+      try (var stmt = conn.prepareStatement(statement)) {
+        try (var rs = stmt.executeQuery()) {
+          while (rs.next()) {
+            listGamesData.add(new ListGamesData(rs.getInt("gameId"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName")));
+          }
+        }
+      }
+      return listGamesData;
+    } catch (SQLException | DataAccessException e) {
+      throw new ExceptionResult(500, String.format("unable to read database: %s", e.getMessage()));
+    }
   }
 
   @Override
