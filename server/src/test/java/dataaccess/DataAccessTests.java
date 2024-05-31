@@ -162,4 +162,12 @@ public class DataAccessTests {
     GameDAO gameDAO = getGameDAO(gameDAOClass);
     assertDoesNotThrow(() -> gameDAO.createGame("testGameName"));
   }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("Create Game fails because gameName is null")
+  void createGameFailure(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    assertThrows(ExceptionResult.class, () -> gameDAO.createGame(null));
+  }
 }
