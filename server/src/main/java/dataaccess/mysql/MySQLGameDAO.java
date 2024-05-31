@@ -12,10 +12,11 @@ import util.JsonSerializer;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class MySQLGameDAO implements GameDAO {
+public class MySQLGameDAO extends SQLUpdateExecutor implements GameDAO {
   @Override
   public void clear() throws ExceptionResult {
-
+    var statement = "TRUNCATE TABLE game";
+    executeUpdate(statement);
   }
 
   @Override
