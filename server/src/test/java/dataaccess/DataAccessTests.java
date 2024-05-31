@@ -208,4 +208,15 @@ public class DataAccessTests {
     assertEquals(expected.size(), actual.size());
     assertEquals(expected, actual);
   }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLGameDAO.class, MemoryGameDAO.class})
+  @DisplayName("No games found")
+  void listGamesDoesNotMatch(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    Collection<ListGamesData> expected = new HashSet<>();
+    Collection<ListGamesData> actual = gameDAO.listGames();
+    assertEquals(0, actual.size());
+    assertEquals(expected, actual);
+  }
 }
