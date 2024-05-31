@@ -10,6 +10,8 @@ import requests.AuthRequest;
 import requests.RegisterRequest;
 import results.*;
 
+import static util.Security.*;
+
 public class UserService {
   private final UserDAO userDAO;
   private final AuthDAO authDAO;
@@ -26,14 +28,12 @@ public class UserService {
     if (user != null) {
       throw new ExceptionResult(403, "Error: already taken");
     }
-    userDAO.createUser(request.username(), request.password(), request.email());
+    String hashedPassword = encyptPassword(request.password());
+    userDAO.createUser(request.username(), hashedPassword, request.email());
     AuthData auth = authDAO.createAuth(request.username());
     return new LoginResult(auth.username(), auth.authToken());
   }
 
-  private boolean passwordMatches(UserData user, String password) {
-    return user.password().equals(password);
-  }
   public LoginResult login(LoginRequest request) throws ExceptionResult {
     UserData user = userDAO.getUser(request.username());
     if (user == null) {
