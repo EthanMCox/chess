@@ -229,8 +229,8 @@ public class DataAccessTests {
     int gameID = gameDAO.createGame("testGameName");
     GameData expectedGameData = new GameData(gameID, "testWhiteUsername", null, "testGameName", new ChessGame());
     gameDAO.updateGame(expectedGameData);
-    GameData ActualGameData = gameDAO.getGame(gameID);
-    assertEquals(expectedGameData, ActualGameData);
+    GameData actualGameData = gameDAO.getGame(gameID);
+    assertEquals(expectedGameData, actualGameData);
   }
 
   @ParameterizedTest

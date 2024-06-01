@@ -31,24 +31,6 @@ public class MySQLAuthDAO extends SQLUpdateExecutor implements AuthDAO {
       return new AuthData(authToken, username);
   }
 
-  private AuthData getAuthUser(String username) throws ExceptionResult {
-    try (var conn = DatabaseManager.getConnection()) {
-      var statement = "SELECT username, authToken FROM auth WHERE username=?";
-      try (var stmt = conn.prepareStatement(statement)) {
-        stmt.setString(1, username);
-        try (var rs = stmt.executeQuery()) {
-          if (rs.next()) {
-            return new AuthData(rs.getString("authToken"), username);
-          } else {
-            return null;
-          }
-        }
-      }
-    } catch (SQLException | DataAccessException e) {
-      throw new ExceptionResult(500, String.format("unable to read database: %s", e.getMessage()));
-    }
-  }
-
   @Override
   public AuthData getAuth(String authToken) throws ExceptionResult {
     try (var conn = DatabaseManager.getConnection()) {
