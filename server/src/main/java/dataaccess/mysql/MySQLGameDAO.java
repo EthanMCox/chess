@@ -67,6 +67,9 @@ public class MySQLGameDAO extends SQLUpdateExecutor implements GameDAO {
 
   @Override
   public void updateGame(GameData gameData) throws ExceptionResult {
+    if (gameData == null) {
+      throw new ExceptionResult(400, "bad request");
+    }
     var statement = "UPDATE game SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameId=?";
     String game = JsonSerializer.serialize(gameData.game());
     executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game, gameData.gameID());

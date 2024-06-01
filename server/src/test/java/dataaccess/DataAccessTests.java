@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataaccess.mysql.*;
 import dataaccess.inmemory.*;
 import exception.ExceptionResult;
@@ -218,5 +219,25 @@ public class DataAccessTests {
     Collection<ListGamesData> actual = gameDAO.listGames();
     assertEquals(0, actual.size());
     assertEquals(expected, actual);
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Update game success")
+  void updateGameSuccess(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    int gameID = gameDAO.createGame("testGameName");
+    GameData expectedGameData = new GameData(gameID, "testWhiteUsername", null, "testGameName", new ChessGame());
+    gameDAO.updateGame(expectedGameData);
+    GameData ActualGameData = gameDAO.getGame(gameID);
+    assertEquals(expectedGameData, ActualGameData);
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {MySQLUserDAO.class, MemoryUserDAO.class})
+  @DisplayName("Update game fails because gameData is null")
+  void updateGameFailure(Class<? extends GameDAO> gameDAOClass) throws ExceptionResult {
+    GameDAO gameDAO = getGameDAO(gameDAOClass);
+    assertThrows(ExceptionResult.class, () -> gameDAO.updateGame(null));
   }
 }

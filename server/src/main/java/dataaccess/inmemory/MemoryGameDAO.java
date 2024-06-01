@@ -33,7 +33,10 @@ public class MemoryGameDAO implements GameDAO {
   }
 
   @Override
-  public void updateGame(GameData gameData) {
+  public void updateGame(GameData gameData) throws ExceptionResult {
+    if (gameData == null) {
+      throw new ExceptionResult(400, "bad request");
+    }
     games.put(gameData.gameID(), gameData);
   }
 
