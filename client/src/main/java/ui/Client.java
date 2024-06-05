@@ -25,10 +25,10 @@ public class Client {
         case "register" -> register(params);
         case "login" -> signIn(params);
         case "logout" -> signOut();
-        case "creategame" -> createGame(params);
-        case "listgames" -> listGames();
-        case "playgame" -> playGame(params);
-        case "observeGame" -> observeGame(params);
+        case "create" -> createGame(params);
+        case "list" -> listGames();
+        case "join" -> joinGame(params);
+        case "observe" -> observeGame(params);
         case "quit" -> "quit";
         default -> help();
       };
@@ -57,7 +57,7 @@ public class Client {
     return "placeholder";
   }
 
-  public String playGame(String... params) throws ExceptionResult {
+  public String joinGame(String... params) throws ExceptionResult {
     return "placeholder";
   }
 
@@ -66,6 +66,25 @@ public class Client {
   }
 
   public String help() {
-    return "placeholder";
+    if (state == State.SIGNEDOUT) {
+      return """
+          Commands:
+          register <username> <password> - to create an account
+          login <username> <password> - to play chess
+          quit - playing chess
+          help - with possible commands
+          """;
+    } else {
+      return """
+          Commands:
+          create <gameName> - a game
+          list - games
+          join <ID> [WHITE|BLACK] - a game
+          observe <ID> - a game
+          logout - when you are done
+          quit - playing chess
+          help - with possible commands
+          """;
+    }
   }
 }
