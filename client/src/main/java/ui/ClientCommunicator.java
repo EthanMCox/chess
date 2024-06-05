@@ -8,7 +8,8 @@ import java.net.*;
 
 public class ClientCommunicator {
 
-  public static <T> T makeRequest (String method, String URLPath, Object request, Class<T> responseClass, String authToken) throws ExceptionResult {
+  public static <T> T makeRequest (String method, String URLPath, Object request, Class<T> responseClass,
+                                   String authToken) throws ExceptionResult {
     try {
       URL url = (new URI("http://localhost:8080" + URLPath)).toURL();
       HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
@@ -23,11 +24,10 @@ public class ClientCommunicator {
       }
       httpConnection.connect();
       throwIfNotSuccessful(httpConnection);
+      return readBody(httpConnection, responseClass);
     } catch (Exception ex) {
         throw new ExceptionResult(500, ex.getMessage());
     }
-
-    return null;
   }
 
   private static void writeBody(Object request, HttpURLConnection http) throws IOException {
@@ -38,6 +38,19 @@ public class ClientCommunicator {
         reqBody.write(reqData.getBytes());
       }
     }
+  }
+
+  private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+    T response = null;
+    if (http.getContentLength() < 0) {
+      try (InputStream respBody = http.getInputStream()) {
+        InputStreamReader reader = new InputStreamReader(respBody);
+        if (responseClass != null) {
+          response = new Gson().fromJson(reader, responseClass);
+        }
+      }
+    }
+    return response;
   }
 
   private static void throwIfNotSuccessful(HttpURLConnection http) throws ExceptionResult, IOException {
