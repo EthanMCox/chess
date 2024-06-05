@@ -12,4 +12,6 @@ public class Client {
     this.serverUrl = serverUrl;
     this.server = new ServerFacade();
   }
+
+
 }

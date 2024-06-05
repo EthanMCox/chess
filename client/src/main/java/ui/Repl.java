@@ -11,7 +11,17 @@ public class Repl {
   }
 
   public void run() {
-    System.out.println("\uD83D\uDC36 Welcome to Chess" + CHESS_LOGO + "Sign in to start.");
+    System.out.println(CHESS_LOGO + "\uD83D\uDC36 Welcome to Chess. Type help to view options");
+
+    Scanner scanner = new Scanner(System.in);
+    var result = "";
+    while (!result.equals("quit")) {
+      String line = scanner.nextLine();
+    }
+  }
+
+  private void printPrompt() {
+    System.out.print(RESET + ">>> " + SET_TEXT_COLOR_GREEN);
   }
 
 }
