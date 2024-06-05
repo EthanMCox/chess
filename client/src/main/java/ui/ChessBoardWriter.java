@@ -69,7 +69,11 @@ public class ChessBoardWriter {
     int rowNumber = color == ChessGame.TeamColor.BLACK ? row + 1 : BOARD_SIZE_IN_SQUARES - row;
     out.print(rowNumber);
     out.print(EMPTY);
+    ChessGame.TeamColor squareColor;
+    squareColor = color == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+
     for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+      squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 //      drawSquare(out, squares[row][col], row, col);
     }
     out.print(EMPTY);
@@ -78,6 +82,21 @@ public class ChessBoardWriter {
     out.print(SET_BG_COLOR_BLACK);
     out.println();
 
+  }
+
+  private static void drawSquare(PrintStream out, ChessPiece piece, int row, int col, ChessGame.TeamColor squareColor) {
+    if (squareColor == ChessGame.TeamColor.WHITE) {
+      out.print(SET_BG_COLOR_WHITE);
+    } else {
+      out.print(SET_BG_COLOR_BLACK);
+    }
+    if (piece == null) {
+      out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
+    } else {
+      out.print(EMPTY);
+      drawPiece(out, piece);
+      out.print(EMPTY);
+    }
   }
 
   private static void setBorder(PrintStream out) {
