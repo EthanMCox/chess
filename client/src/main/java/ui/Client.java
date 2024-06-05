@@ -36,4 +36,36 @@ public class Client {
       return ex.getMessage();
     }
   }
+
+  public String register(String... params) throws ExceptionResult {
+    return "placeholder";
+  }
+
+  public String signIn(String... params) throws ExceptionResult {
+    return "placeholder";
+  }
+
+  public String signOut() {
+    return "placeholder";
+  }
+
+  public String createGame(String... params) throws ExceptionResult {
+    return "placeholder";
+  }
+
+  public String listGames() throws ExceptionResult {
+    return "placeholder";
+  }
+
+  public String playGame(String... params) throws ExceptionResult {
+    return "placeholder";
+  }
+
+  public String observeGame(String... params) throws ExceptionResult {
+    return "placeholder";
+  }
+
+  public String help() {
+    return "placeholder";
+  }
 }
