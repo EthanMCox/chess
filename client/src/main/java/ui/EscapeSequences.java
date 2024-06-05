@@ -59,6 +59,8 @@ public class EscapeSequences {
     public static final String BLACK_KNIGHT = " N ";
     public static final String BLACK_ROOK = " R ";
     public static final String BLACK_PAWN = " P ";
+    public static final String CHESS_LOGO = " ♞ ";
+
 //    public static final String WHITE_KING = " ♔ ";
 //    public static final String WHITE_QUEEN = " ♕ ";
 //    public static final String WHITE_BISHOP = " ♗ ";
