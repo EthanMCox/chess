@@ -39,9 +39,7 @@ public class ChessBoardWriter {
   }
 
   private static void printHeadersOrFooters(PrintStream out, ChessGame.TeamColor color) {
-    out.print(SET_BG_COLOR_LIGHT_GREY);
-    out.print(SET_TEXT_COLOR_BLACK);
-    out.print(SET_TEXT_BOLD);
+    setBorder(out);
     out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS + 1));
     String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h" };
     for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
@@ -63,6 +61,29 @@ public class ChessBoardWriter {
     for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
       drawRow(out, row, color, squares);
     }
+  }
+
+  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessPiece[][] squares) {
+    setBorder(out);
+    out.print(EMPTY);
+    int rowNumber = color == ChessGame.TeamColor.BLACK ? row + 1 : BOARD_SIZE_IN_SQUARES - row;
+    out.print(rowNumber);
+    out.print(EMPTY);
+    for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+//      drawSquare(out, squares[row][col], row, col);
+    }
+    out.print(EMPTY);
+    out.print(rowNumber);
+    out.print(EMPTY);
+    out.print(SET_BG_COLOR_BLACK);
+    out.println();
+
+  }
+
+  private static void setBorder(PrintStream out) {
+    out.print(SET_BG_COLOR_LIGHT_GREY);
+    out.print(SET_TEXT_COLOR_BLACK);
+    out.print(SET_TEXT_BOLD);
   }
 
 
