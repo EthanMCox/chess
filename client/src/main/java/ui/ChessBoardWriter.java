@@ -29,18 +29,28 @@ public class ChessBoardWriter {
 
 
   public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color) {
-    printHeaderOrFooter(out, color);
+    printHeadersOrFooters(out, color);
+
+    printHeadersOrFooters(out, color);
   }
 
   private static void printHeadersOrFooters(PrintStream out, ChessGame.TeamColor color) {
-//    setBlack(out);
+    out.print(SET_BG_COLOR_LIGHT_GREY);
+    out.print(SET_TEXT_COLOR_WHITE);
+    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS + 1));
     String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h" };
     for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-      drawHeader(out, headers[boardCol]);
+      if (color == ChessGame.TeamColor.WHITE) {
+        out.print(headers[boardCol]);
+      } else {
+        out.print(headers[BOARD_SIZE_IN_SQUARES - 1 - boardCol]);
+      }
       if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
         out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
       }
     }
+    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS + 1));
+    out.print(SET_BG_COLOR_BLACK);
     out.println();
   }
 }
