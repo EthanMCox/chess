@@ -20,8 +20,6 @@ public class ChessBoardWriter {
 
     out.print(ERASE_SCREEN);
 
-//    drawHeaders(out);
-
     drawChessBoard(out, ChessGame.TeamColor.WHITE, new ChessBoard());
 
     out.print(SET_BG_COLOR_BLACK);
@@ -58,23 +56,30 @@ public class ChessBoardWriter {
   }
 
   private static void drawRows(PrintStream out, ChessGame.TeamColor color, ChessPiece[][] squares) {
+    ChessGame.TeamColor squareColor;
+    squareColor = ChessGame.TeamColor.WHITE;
     for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
-      drawRow(out, row, color, squares);
+      squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+      drawRow(out, row, color, squareColor, squares);
     }
   }
 
-  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessPiece[][] squares) {
+  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessGame.TeamColor squareColor ,ChessPiece[][] squares) {
     setBorder(out);
     out.print(EMPTY);
     int rowNumber = color == ChessGame.TeamColor.BLACK ? row + 1 : BOARD_SIZE_IN_SQUARES - row;
     out.print(rowNumber);
     out.print(EMPTY);
-    ChessGame.TeamColor squareColor;
-    squareColor = color == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 
     for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
       squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
-//      drawSquare(out, squares[row][col], row, col);
+      ChessPiece piece;
+      if (color == ChessGame.TeamColor.BLACK) {
+        piece = squares[row][col];
+      } else {
+        piece = squares[BOARD_SIZE_IN_SQUARES - 1 - row][BOARD_SIZE_IN_SQUARES - 1 - col];
+      }
+      drawSquare(out, piece, squareColor);
     }
     out.print(EMPTY);
     out.print(rowNumber);
@@ -84,7 +89,7 @@ public class ChessBoardWriter {
 
   }
 
-  private static void drawSquare(PrintStream out, ChessPiece piece, int row, int col, ChessGame.TeamColor squareColor) {
+  private static void drawSquare(PrintStream out, ChessPiece piece, ChessGame.TeamColor squareColor) {
     if (squareColor == ChessGame.TeamColor.WHITE) {
       out.print(SET_BG_COLOR_WHITE);
     } else {
@@ -101,9 +106,9 @@ public class ChessBoardWriter {
 
   private static void drawPiece(PrintStream out, ChessPiece piece) {
     if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-      out.print(SET_TEXT_COLOR_WHITE);
+      out.print(SET_TEXT_COLOR_RED);
     } else {
-      out.print(SET_TEXT_COLOR_BLACK);
+      out.print(SET_TEXT_COLOR_BLUE);
     }
     switch (piece.getTeamColor()) {
       case WHITE -> {
