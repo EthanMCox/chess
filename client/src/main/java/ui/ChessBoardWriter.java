@@ -1,6 +1,8 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +22,7 @@ public class ChessBoardWriter {
 
 //    drawHeaders(out);
 
-    drawChessBoard(out, ChessGame.TeamColor.WHITE);
+    drawChessBoard(out, ChessGame.TeamColor.WHITE, new ChessBoard());
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
@@ -28,15 +30,18 @@ public class ChessBoardWriter {
 
 
 
-  public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color) {
+  public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessBoard board) {
     printHeadersOrFooters(out, color);
+    ChessPiece[][] squares = board.getSquares();
+    drawRows(out, color, squares);
 
     printHeadersOrFooters(out, color);
   }
 
   private static void printHeadersOrFooters(PrintStream out, ChessGame.TeamColor color) {
     out.print(SET_BG_COLOR_LIGHT_GREY);
-    out.print(SET_TEXT_COLOR_WHITE);
+    out.print(SET_TEXT_COLOR_BLACK);
+    out.print(SET_TEXT_BOLD);
     out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS + 1));
     String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h" };
     for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
@@ -53,4 +58,12 @@ public class ChessBoardWriter {
     out.print(SET_BG_COLOR_BLACK);
     out.println();
   }
+
+  private static void drawRows(PrintStream out, ChessGame.TeamColor color, ChessPiece[][] squares) {
+    for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
+      drawRow(out, row, color, squares);
+    }
+  }
+
+
 }
