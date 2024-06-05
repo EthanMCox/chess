@@ -75,12 +75,13 @@ public class ChessBoardWriter {
       squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
       ChessPiece piece;
       if (color == ChessGame.TeamColor.BLACK) {
-        piece = squares[row][col];
+        piece = squares[row][BOARD_SIZE_IN_SQUARES -1 - col];
       } else {
-        piece = squares[BOARD_SIZE_IN_SQUARES - 1 - row][BOARD_SIZE_IN_SQUARES - 1 - col];
+        piece = squares[BOARD_SIZE_IN_SQUARES - 1 - row][col];
       }
       drawSquare(out, piece, squareColor);
     }
+    setBorder(out);
     out.print(EMPTY);
     out.print(rowNumber);
     out.print(EMPTY);
@@ -98,9 +99,7 @@ public class ChessBoardWriter {
     if (piece == null) {
       out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
     } else {
-      out.print(EMPTY);
       drawPiece(out, piece);
-      out.print(EMPTY);
     }
   }
 
