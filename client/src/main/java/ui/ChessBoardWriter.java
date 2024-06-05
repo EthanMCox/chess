@@ -20,7 +20,7 @@ public class ChessBoardWriter {
 
     out.print(ERASE_SCREEN);
 
-    drawChessBoard(out, ChessGame.TeamColor.WHITE, new ChessBoard());
+    drawChessBoard(out, ChessGame.TeamColor.BLACK, new ChessBoard());
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
@@ -47,7 +47,7 @@ public class ChessBoardWriter {
         out.print(headers[BOARD_SIZE_IN_SQUARES - 1 - boardCol]);
       }
       if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-        out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
+        out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS-1));
       }
     }
     out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS + 1));
