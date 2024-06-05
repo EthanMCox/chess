@@ -24,4 +24,18 @@ public class ClientCommunicator {
     return null;
   }
 
+  private void throwIfNotSuccessful(HttpURLConnection http) throws ExceptionResult, IOException {
+    var status = http.getResponseCode();
+    if (!isSuccessful(status)) {
+      throw new ExceptionResult(status, "failure: " + status);
+    }
+    if (http.getResponseCode() < 200 || http.getResponseCode() >= 300) {
+      throw new ExceptionResult(http.getResponseCode(), http.getResponseMessage());
+    }
+  }
+
+  private boolean isSuccessful(int status) {
+    return status >= 200 && status < 300;
+  }
+
 }
