@@ -13,7 +13,7 @@ public class Client {
 
   public Client(String serverUrl) {
     this.serverUrl = serverUrl;
-    this.server = new ServerFacade();
+    this.server = new ServerFacade(serverUrl);
   }
 
   public String eval(String input) {
@@ -38,6 +38,10 @@ public class Client {
   }
 
   public String register(String... params) throws ExceptionResult {
+    if (params.length >= 3) {
+
+    }
+
     return "placeholder";
   }
 
