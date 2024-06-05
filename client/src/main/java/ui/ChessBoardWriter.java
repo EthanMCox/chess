@@ -99,6 +99,36 @@ public class ChessBoardWriter {
     }
   }
 
+  private static void drawPiece(PrintStream out, ChessPiece piece) {
+    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+      out.print(SET_TEXT_COLOR_WHITE);
+    } else {
+      out.print(SET_TEXT_COLOR_BLACK);
+    }
+    switch (piece.getTeamColor()) {
+      case WHITE -> {
+        switch (piece.getPieceType()) {
+          case KING -> out.print(WHITE_KING);
+          case QUEEN -> out.print(WHITE_QUEEN);
+          case BISHOP -> out.print(WHITE_BISHOP);
+          case KNIGHT -> out.print(WHITE_KNIGHT);
+          case ROOK -> out.print(WHITE_ROOK);
+          case PAWN -> out.print(WHITE_PAWN);
+        }
+      }
+      case BLACK -> {
+        switch (piece.getPieceType()) {
+          case KING -> out.print(BLACK_KING);
+          case QUEEN -> out.print(BLACK_QUEEN);
+          case BISHOP -> out.print(BLACK_BISHOP);
+          case KNIGHT -> out.print(BLACK_KNIGHT);
+          case ROOK -> out.print(BLACK_ROOK);
+          case PAWN -> out.print(BLACK_PAWN);
+        }
+      }
+    }
+  }
+
   private static void setBorder(PrintStream out) {
     out.print(SET_BG_COLOR_LIGHT_GREY);
     out.print(SET_TEXT_COLOR_BLACK);
