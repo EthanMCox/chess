@@ -79,8 +79,18 @@ public class Client {
     throw new ExceptionResult(400, "Expected: login <username> <password>");
   }
 
-  public String logout() {
-    return "placeholder";
+  public String logout() throws ExceptionResult {
+    if (state == State.SIGNEDOUT) {
+      return "You are already logged out";
+    }
+    SuccessResult response = server.logout(authToken);
+    if (response != null) {
+      state = State.SIGNEDOUT;
+      authToken = null;
+      username = null;
+      return "You are logged out";
+    }
+    return "Error: unable to logout";
   }
 
   public String createGame(String... params) throws ExceptionResult {

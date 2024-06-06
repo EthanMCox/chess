@@ -23,4 +23,10 @@ public class ServerFacade {
       LoginRequest request = new LoginRequest(username, password);
       return ClientCommunicator.makeRequest("POST", path, request, LoginResult.class, null);
     }
+
+    public SuccessResult logout(String authToken) throws ExceptionResult {
+      var path = serverUrl + "/session";
+      AuthRequest request = new AuthRequest(authToken);
+      return ClientCommunicator.makeRequest("DELETE", path, request, SuccessResult.class, authToken);
+    }
 }
