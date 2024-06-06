@@ -11,7 +11,7 @@ public class Repl {
   }
 
   public void run() {
-    System.out.println(CHESS_LOGO + "\uD83D\uDC36 Welcome to Chess. Type help to view options");
+    System.out.println(CHESS_LOGO + "Welcome to Chess. Type help to view options");
 
     Scanner scanner = new Scanner(System.in);
     var result = "";

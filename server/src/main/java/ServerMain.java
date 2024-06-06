@@ -1,9 +1,8 @@
-import dataaccess.*;
 import dataaccess.mysql.*;
 import service.*;
 import server.Server;
 
-public class Main {
+public class ServerMain {
 
     public static void main(String[] args) {
         try {

@@ -11,7 +11,7 @@ public class ClientCommunicator {
   public static <T> T makeRequest (String method, String URLPath, Object request, Class<T> responseClass,
                                    String authToken) throws ExceptionResult {
     try {
-      URL url = (new URI("http://localhost:8080" + URLPath)).toURL();
+      URL url = (new URI(URLPath)).toURL();
       HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
       httpConnection.setReadTimeout(5000);
       httpConnection.setRequestMethod(method);
@@ -56,7 +56,7 @@ public class ClientCommunicator {
   private static void throwIfNotSuccessful(HttpURLConnection http) throws ExceptionResult, IOException {
     var status = http.getResponseCode();
     if (!isSuccessful(status)) {
-      throw new ExceptionResult(status, "failure: " + status);
+      throw new ExceptionResult(status, "failed to connect to server: " + status);
     }
     if (http.getResponseCode() < 200 || http.getResponseCode() >= 300) {
       throw new ExceptionResult(http.getResponseCode(), http.getResponseMessage());

@@ -55,7 +55,7 @@ public class Client {
 
     }
 
-    throw new ExceptionResult(400, "Expected: <username> <password> <email>");
+    throw new ExceptionResult(400, "Expected: register <username> <password> <email>");
   }
 
   public String signIn(String... params) throws ExceptionResult {
