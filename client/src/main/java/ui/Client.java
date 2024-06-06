@@ -1,18 +1,18 @@
 package ui;
 
 import exception.ExceptionResult;
+import results.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
 public class Client {
-  private String visitorName = null;
   private final ServerFacade server;
-  private final String serverUrl;
   private State state = State.SIGNEDOUT;
+  private String username = null;
+  private String authToken = null;
 
   public Client(String serverUrl) {
-    this.serverUrl = serverUrl;
     this.server = new ServerFacade(serverUrl);
   }
 
@@ -39,10 +39,23 @@ public class Client {
 
   public String register(String... params) throws ExceptionResult {
     if (params.length >= 3) {
+      var username = params[0];
+      var password = params[1];
+      var email = params[2];
+      LoginResult response = server.register(username, password, email);
+
+      if (response != null) {
+        authToken = response.authToken();
+        this.username = response.username();
+        state = State.SIGNEDIN;
+        return String.format("You are logged in as %s.", this.username);
+      } else {
+        throw new ExceptionResult(400, "Error: unable to login");
+      }
 
     }
 
-    return "placeholder";
+    throw new ExceptionResult(400, "Expected: <username> <password> <email>");
   }
 
   public String signIn(String... params) throws ExceptionResult {

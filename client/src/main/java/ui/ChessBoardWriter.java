@@ -20,7 +20,7 @@ public class ChessBoardWriter {
 
     out.print(ERASE_SCREEN);
 
-    drawChessBoard(out, ChessGame.TeamColor.BLACK, new ChessBoard());
+    drawChessBoard(out, ChessGame.TeamColor.WHITE, new ChessBoard());
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
