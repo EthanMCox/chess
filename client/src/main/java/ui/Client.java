@@ -23,8 +23,8 @@ public class Client {
       var params = Arrays.copyOfRange(tokens, 1, tokens.length);
       return switch (cmd) {
         case "register" -> register(params);
-        case "login" -> signIn(params);
-        case "logout" -> signOut();
+        case "login" -> login(params);
+        case "logout" -> logout();
         case "create" -> createGame(params);
         case "list" -> listGames();
         case "join" -> joinGame(params);
@@ -48,9 +48,9 @@ public class Client {
         authToken = response.authToken();
         this.username = response.username();
         state = State.SIGNEDIN;
-        return String.format("You are logged in as %s.", this.username);
+        return String.format("You are logged in as %s. Type help to view more options", this.username);
       } else {
-        throw new ExceptionResult(400, "Error: unable to login");
+        throw new ExceptionResult(400, "Error: unable to register");
       }
 
     }
@@ -58,11 +58,28 @@ public class Client {
     throw new ExceptionResult(400, "Expected: register <username> <password> <email>");
   }
 
-  public String signIn(String... params) throws ExceptionResult {
-    return "placeholder";
+  public String login(String... params) throws ExceptionResult {
+    if (state == State.SIGNEDIN) {
+      throw new ExceptionResult(400, "You are already logged in. Logout to switch accounts");
+    }
+    if (params.length >= 2) {
+      var username = params[0];
+      var password = params[1];
+      LoginResult response = server.login(username, password);
+
+      if (response != null) {
+        authToken = response.authToken();
+        this.username = response.username();
+        state = State.SIGNEDIN;
+        return String.format("You are logged in as %s. Type help to view more options", this.username);
+      } else {
+        throw new ExceptionResult(400, "Error: unable to login");
+      }
+    }
+    throw new ExceptionResult(400, "Expected: login <username> <password>");
   }
 
-  public String signOut() {
+  public String logout() {
     return "placeholder";
   }
 
@@ -86,7 +103,7 @@ public class Client {
     if (state == State.SIGNEDOUT) {
       return """
           Commands:
-          register <username> <password> - to create an account
+          register <username> <password> <email> - to create an account
           login <username> <password> - to play chess
           quit - playing chess
           help - with possible commands

@@ -19,10 +19,8 @@ public class ServerFacade {
     }
 
     public LoginResult login(String username, String password) throws ExceptionResult {
-      var path = serverUrl + "/user";
+      var path = serverUrl + "/session";
       LoginRequest request = new LoginRequest(username, password);
       return ClientCommunicator.makeRequest("POST", path, request, LoginResult.class, null);
     }
-
-
 }
