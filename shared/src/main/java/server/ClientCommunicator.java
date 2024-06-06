@@ -56,11 +56,11 @@ public class ClientCommunicator {
   private static void throwIfNotSuccessful(HttpURLConnection http) throws ExceptionResult, IOException {
     var status = http.getResponseCode();
     if (!isSuccessful(status)) {
-      throw new ExceptionResult(status, "failed to connect to server: " + status);
+      throw new ExceptionResult(status, "failed to execute: " + status);
     }
-    if (http.getResponseCode() < 200 || http.getResponseCode() >= 300) {
-      throw new ExceptionResult(http.getResponseCode(), http.getResponseMessage());
-    }
+//    if (!isSuccessful(status)) {
+//      throw new ExceptionResult(http.getResponseCode(), http.getResponseMessage());
+//    }
   }
 
   private static boolean isSuccessful(int status) {
