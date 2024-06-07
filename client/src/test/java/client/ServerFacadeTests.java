@@ -65,4 +65,24 @@ public class ServerFacadeTests {
         ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.logout("invalidAuth"));
         assertEquals(401, ex.statusCode());
     }
+
+    @Test
+    @DisplayName("Valid login")
+    public void loginSuccess() throws ExceptionResult {
+        LoginResult registerResult = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        facade.logout(registerResult.authToken());
+        LoginResult actual = assertDoesNotThrow(() -> facade.login("testUser", "password123"));
+        LoginResult expected = new LoginResult("testUser", "authToken");
+        assertEquals(expected.username(), actual.username());
+    }
+
+    @Test
+    @DisplayName("login with invalid password")
+    public void loginInvalidPassword() throws ExceptionResult {
+        assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.login("testUser", "invalidPassword"));
+        assertEquals(401, ex.statusCode());
+    }
+
+
 }
