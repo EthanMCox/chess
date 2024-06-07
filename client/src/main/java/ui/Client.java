@@ -1,11 +1,14 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exception.ExceptionResult;
 import model.*;
 import results.*;
 import server.ServerFacade;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -98,6 +101,9 @@ public class Client {
       state = State.SIGNEDOUT;
       authToken = null;
       username = null;
+      listedGames.clear();
+      joinedGame = null;
+      isObserver = false;
       return "You are logged out";
     }
     return "Error: unable to logout";
@@ -158,6 +164,10 @@ public class Client {
       SuccessResult response = server.joinGame(gameID, teamColor, authToken);
       if (response != null) {
         joinedGame = gameID;
+        ChessBoard board = new ChessBoard();
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
+        ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.BLACK, board);
         return String.format("%s joined game %d as %s", username, Integer.parseInt(params[0]), teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
       }
       throw new ExceptionResult(400, "Error: unable to join game");
@@ -175,6 +185,10 @@ public class Client {
     if (params.length >= 1) {
       joinedGame = listedGames.get(Integer.parseInt(params[0]));
       isObserver = true;
+      ChessBoard board = new ChessBoard();
+      var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+      ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
+      ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.BLACK, board);
       return String.format("%s is observing game %d", username, Integer.parseInt(params[0]));
     }
     throw new ExceptionResult(400, "Expected: observe <ID>");
