@@ -8,10 +8,10 @@ import java.net.*;
 
 public class ClientCommunicator {
 
-  public static <T> T makeRequest (String method, String URLPath, Object request, Class<T> responseClass,
+  public static <T> T makeRequest (String method, String urlPath, Object request, Class<T> responseClass,
                                    String authToken) throws ExceptionResult {
     try {
-      URL url = (new URI(URLPath)).toURL();
+      URL url = (new URI(urlPath)).toURL();
       HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
       httpConnection.setReadTimeout(5000);
       httpConnection.setRequestMethod(method);
@@ -58,9 +58,6 @@ public class ClientCommunicator {
     if (!isSuccessful(status)) {
       throw new ExceptionResult(status, "failed to execute: " + status);
     }
-//    if (!isSuccessful(status)) {
-//      throw new ExceptionResult(http.getResponseCode(), http.getResponseMessage());
-//    }
   }
 
   private static boolean isSuccessful(int status) {
