@@ -84,5 +84,19 @@ public class ServerFacadeTests {
         assertEquals(401, ex.statusCode());
     }
 
+    @Test
+    @DisplayName("Create game success")
+    public void createGameSuccess() throws ExceptionResult {
+        LoginResult loginResult = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        CreateGameResult actual = assertDoesNotThrow(() -> facade.createGame("testGame", loginResult.authToken()));
+        CreateGameResult expected = new CreateGameResult(1);
+        assertEquals(expected.gameID(), actual.gameID());
+    }
 
+    @Test
+    @DisplayName("Create game with invalid auth")
+    public void createGameInvalidAuth() throws ExceptionResult {
+        ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.createGame("testGame", "invalidAuth"));
+        assertEquals(401, ex.statusCode());
+    }
 }
