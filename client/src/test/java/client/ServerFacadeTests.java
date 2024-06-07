@@ -1,10 +1,17 @@
 package client;
 
 import exception.ExceptionResult;
+import model.ListGamesData;
 import org.junit.jupiter.api.*;
 import results.*;
 import server.Server;
 import serverclientcommunication.ServerFacade;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -97,6 +104,27 @@ public class ServerFacadeTests {
     @DisplayName("Create game with invalid auth")
     public void createGameInvalidAuth() throws ExceptionResult {
         ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.createGame("testGame", "invalidAuth"));
+        assertEquals(401, ex.statusCode());
+    }
+
+    @Test
+    @DisplayName("List games success")
+    public void listGamesSuccess() throws ExceptionResult {
+        LoginResult loginResult = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        CreateGameResult createGameResult = assertDoesNotThrow(() -> facade.createGame("testGame", loginResult.authToken()));
+        facade.createGame("testGame2", loginResult.authToken());
+        ListGamesResult actual = assertDoesNotThrow(() -> facade.listGames(loginResult.authToken()));
+        Collection<ListGamesData> expectedGames = new HashSet<>();
+        expectedGames.add(new ListGamesData(1, null, null, "testGame"));
+        expectedGames.add(new ListGamesData(2, null, null, "testGame2"));
+        ListGamesResult expected = new ListGamesResult(expectedGames);
+        assertEquals(new HashSet<>(expected.games()), new HashSet<>(actual.games()));
+    }
+
+    @Test
+    @DisplayName("List games with invalid auth")
+    public void listGamesInvalidAuth() throws ExceptionResult {
+        ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.listGames("invalidAuth"));
         assertEquals(401, ex.statusCode());
     }
 }
