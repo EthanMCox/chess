@@ -26,7 +26,11 @@ public class ClientCommunicator {
       throwIfNotSuccessful(httpConnection);
       return readBody(httpConnection, responseClass);
     } catch (Exception ex) {
+      if (ex instanceof ExceptionResult) {
+        throw (ExceptionResult) ex;
+      } else {
         throw new ExceptionResult(500, ex.getMessage());
+      }
     }
   }
 
