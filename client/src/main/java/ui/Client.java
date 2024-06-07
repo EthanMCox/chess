@@ -5,7 +5,7 @@ import chess.ChessGame;
 import exception.ExceptionResult;
 import model.*;
 import results.*;
-import server.ServerFacade;
+import serverclientcommunication.ServerFacade;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;

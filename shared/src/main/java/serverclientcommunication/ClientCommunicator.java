@@ -1,4 +1,4 @@
-package server;
+package serverclientcommunication;
 
 import com.google.gson.Gson;
 import exception.ExceptionResult;

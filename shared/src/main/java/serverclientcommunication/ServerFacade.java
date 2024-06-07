@@ -1,4 +1,4 @@
-package server;
+package serverclientcommunication;
 
 import chess.ChessGame;
 import exception.ExceptionResult;
