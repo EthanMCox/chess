@@ -111,7 +111,7 @@ public class Client {
       String gameName = params[0];
       CreateGameResult response = server.createGame(gameName, authToken);
       if (response != null) {
-        return String.format("%s created with ID %s", gameName, response.gameID());
+        return String.format("%s created", gameName);
       }
       throw new ExceptionResult(400, "Error: unable to create game");
     }
@@ -158,7 +158,7 @@ public class Client {
       SuccessResult response = server.joinGame(gameID, teamColor, authToken);
       if (response != null) {
         joinedGame = gameID;
-        return String.format("%s joined game %d as %s", username, gameID, teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
+        return String.format("%s joined game %d as %s", username, Integer.parseInt(params[0]), teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
       }
       throw new ExceptionResult(400, "Error: unable to join game");
     }
@@ -166,7 +166,18 @@ public class Client {
   }
 
   public String observeGame(String... params) throws ExceptionResult {
-    return "placeholder";
+    if (state == State.SIGNEDOUT) {
+      throw new ExceptionResult(400, "You must be logged in to observe a game");
+    }
+    if (joinedGame != null) {
+      throw new ExceptionResult(400, "You are already in a game. Quit to observe another game");
+    }
+    if (params.length >= 1) {
+      joinedGame = listedGames.get(Integer.parseInt(params[0]));
+      isObserver = true;
+      return String.format("%s is observing game %d", username, Integer.parseInt(params[0]));
+    }
+    throw new ExceptionResult(400, "Expected: observe <ID>");
   }
 
   public String help() {
