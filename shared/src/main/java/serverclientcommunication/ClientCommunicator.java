@@ -1,10 +1,12 @@
 package serverclientcommunication;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import exception.ExceptionResult;
 
 import java.io.*;
 import java.net.*;
+import java.util.Map;
 
 public class ClientCommunicator {
 
@@ -60,7 +62,23 @@ public class ClientCommunicator {
   private static void throwIfNotSuccessful(HttpURLConnection http) throws ExceptionResult, IOException {
     var status = http.getResponseCode();
     if (!isSuccessful(status)) {
-      throw new ExceptionResult(status, "failed to execute: " + status);
+      String errorMessage = "failed to execute: " + status;
+      if (http.getErrorStream() != null) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(http.getErrorStream()))) {
+          String line;
+          StringBuilder responseContent = new StringBuilder();
+          while ((line = reader.readLine()) != null) {
+            responseContent.append(line);
+          }
+          Map<String, String> errorResponse = new Gson().fromJson(responseContent.toString(), Map.class);
+          if (errorResponse != null && errorResponse.containsKey("message")) {
+            errorMessage = errorResponse.get("message");
+          }
+        } catch (IOException | JsonSyntaxException e) {
+          // Ignore exceptions from reading error message
+        }
+      }
+      throw new ExceptionResult(status, errorMessage);
     }
   }
 

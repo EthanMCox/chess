@@ -18,7 +18,7 @@ public class Client {
   private State state = State.SIGNEDOUT;
   private String username = null;
   private String authToken = null;
-  private HashMap<Integer, Integer> listedGames = new HashMap<>();
+  private HashMap<Integer, Integer> listedGames = null;
   private Integer joinedGame = null;
   private boolean isObserver = false;
 
@@ -101,7 +101,7 @@ public class Client {
       state = State.SIGNEDOUT;
       authToken = null;
       username = null;
-      listedGames.clear();
+      listedGames = null;
       joinedGame = null;
       isObserver = false;
       return "You are logged out";
@@ -133,7 +133,15 @@ public class Client {
       Collection<ListGamesData> games = response.games();
       StringBuilder message = new StringBuilder("Games:\n");
       int count = 1;
-      listedGames.clear();
+      if (listedGames == null) {
+        listedGames = new HashMap<>();
+      } else {
+        listedGames.clear();
+      }
+      if (games.isEmpty()) {
+        message.append("No games available\n");
+        return message.toString();
+      }
       for (ListGamesData game : games) {
         String whiteName = game.whiteUsername() == null ? "None" : game.whiteUsername();
         String blackName = game.blackUsername() == null ? "None" : game.blackUsername();
@@ -151,8 +159,14 @@ public class Client {
     if (state == State.SIGNEDOUT) {
       throw new ExceptionResult(400, "You must be logged in to join a game");
     }
+    if (listedGames == null) {
+      throw new ExceptionResult(400, "List games to view available games");
+    }
     if (params.length >= 2) {
-      int gameID = listedGames.get(Integer.parseInt(params[0]));
+      Integer gameID = listedGames.get(Integer.parseInt(params[0]));
+      if (gameID == null) {
+        throw new ExceptionResult(400, "Invalid game ID. List games to view available games");
+      }
       ChessGame.TeamColor teamColor;
       if (params[1].equalsIgnoreCase("white")) {
         teamColor = ChessGame.TeamColor.WHITE;
@@ -165,6 +179,7 @@ public class Client {
       if (response != null) {
         joinedGame = gameID;
         ChessBoard board = new ChessBoard();
+        board.resetBoard();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
         ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.BLACK, board);
@@ -183,9 +198,14 @@ public class Client {
       throw new ExceptionResult(400, "You are already in a game. Quit to observe another game");
     }
     if (params.length >= 1) {
-      joinedGame = listedGames.get(Integer.parseInt(params[0]));
+      Integer gameID = listedGames.get(Integer.parseInt(params[0]));
+      if (gameID == null) {
+        throw new ExceptionResult(400, "Invalid game ID. List games to view available games");
+      }
+      joinedGame = gameID;
       isObserver = true;
       ChessBoard board = new ChessBoard();
+      board.resetBoard();
       var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
       ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
       ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.BLACK, board);
