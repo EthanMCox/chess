@@ -48,4 +48,9 @@ public class ServerFacade {
       JoinGameRequest request = new JoinGameRequest(null, teamColor, gameID);
       return ClientCommunicator.makeRequest("PUT", path, request, SuccessResult.class, authToken);
     }
+
+    public SuccessResult clear() throws ExceptionResult {
+      var path = serverUrl + "/db";
+      return ClientCommunicator.makeRequest("DELETE", path, null, SuccessResult.class, null);
+    }
 }
