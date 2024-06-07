@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import exception.ExceptionResult;
 import model.ListGamesData;
 import org.junit.jupiter.api.*;
@@ -7,10 +8,8 @@ import results.*;
 import server.Server;
 import serverclientcommunication.ServerFacade;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,5 +125,24 @@ public class ServerFacadeTests {
     public void listGamesInvalidAuth() throws ExceptionResult {
         ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.listGames("invalidAuth"));
         assertEquals(401, ex.statusCode());
+    }
+
+    @Test
+    @DisplayName("Join game success")
+    public void joinGameSuccess() throws ExceptionResult {
+        LoginResult loginResult = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        assertDoesNotThrow(() -> facade.createGame("testGame", loginResult.authToken()));
+        SuccessResult actual = assertDoesNotThrow(() -> facade.joinGame(1, ChessGame.TeamColor.WHITE, loginResult.authToken()));
+        assertInstanceOf(SuccessResult.class, actual);
+    }
+
+    @Test
+    @DisplayName("Join game as white but white is already taken")
+    public void joinGameWhiteTaken() throws ExceptionResult {
+        LoginResult loginResult = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        assertDoesNotThrow(() -> facade.createGame("testGame", loginResult.authToken()));
+        assertDoesNotThrow(() -> facade.joinGame(1, ChessGame.TeamColor.WHITE, loginResult.authToken()));
+        ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.joinGame(1, ChessGame.TeamColor.WHITE, loginResult.authToken()));
+        assertEquals(403, ex.statusCode());
     }
 }

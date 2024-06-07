@@ -19,8 +19,9 @@ public class ChessBoardWriter {
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     out.print(ERASE_SCREEN);
-
-    drawChessBoard(out, ChessGame.TeamColor.WHITE, new ChessBoard());
+    ChessBoard board = new ChessBoard();
+    board.resetBoard();
+    drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
