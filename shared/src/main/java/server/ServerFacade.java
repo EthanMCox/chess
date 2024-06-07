@@ -29,4 +29,10 @@ public class ServerFacade {
       AuthRequest request = new AuthRequest(authToken);
       return ClientCommunicator.makeRequest("DELETE", path, request, SuccessResult.class, authToken);
     }
+
+    public CreateGameResult createGame(String gameName, String authToken) throws ExceptionResult {
+      var path = serverUrl + "/game";
+      CreateGameRequest request = new CreateGameRequest(gameName, authToken);
+      return ClientCommunicator.makeRequest("POST", path, request, CreateGameResult.class, authToken);
+    }
 }

@@ -15,12 +15,12 @@ public class ClientCommunicator {
       HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
       httpConnection.setReadTimeout(5000);
       httpConnection.setRequestMethod(method);
+      if (authToken != null) {
+        httpConnection.setRequestProperty("authorization", authToken);
+      }
       if (method.equals("POST") || method.equals("PUT")) {
         httpConnection.setDoOutput(true);
         writeBody(request, httpConnection);
-      }
-      if (authToken != null) {
-        httpConnection.setRequestProperty("authorization", authToken);
       }
       httpConnection.connect();
       throwIfNotSuccessful(httpConnection);

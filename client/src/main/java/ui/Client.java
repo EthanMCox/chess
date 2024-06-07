@@ -94,7 +94,18 @@ public class Client {
   }
 
   public String createGame(String... params) throws ExceptionResult {
-    return "placeholder";
+    if (state == State.SIGNEDOUT) {
+      throw new ExceptionResult(400, "You must be logged in to create a game");
+    }
+    if (params.length >= 1) {
+      String gameName = params[0];
+      CreateGameResult response = server.createGame(gameName, authToken);
+      if (response != null) {
+        return String.format("Game %s created", response.gameID());
+      }
+      throw new ExceptionResult(400, "Error: unable to create game");
+    }
+    throw new ExceptionResult(400, "Expected: create <gameName>");
   }
 
   public String listGames() throws ExceptionResult {
