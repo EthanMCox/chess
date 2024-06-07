@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import exception.ExceptionResult;
 import requests.*;
 import results.*;
@@ -40,5 +41,11 @@ public class ServerFacade {
       var path = serverUrl + "/game";
       AuthRequest request = new AuthRequest(authToken);
       return ClientCommunicator.makeRequest("GET", path, request, ListGamesResult.class, authToken);
+    }
+
+    public SuccessResult joinGame(int gameID, ChessGame.TeamColor teamColor, String authToken) throws ExceptionResult {
+      var path = serverUrl + "/game";
+      JoinGameRequest request = new JoinGameRequest(authToken, teamColor, gameID);
+      return ClientCommunicator.makeRequest("POST", path, request, SuccessResult.class, authToken);
     }
 }

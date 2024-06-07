@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import exception.ExceptionResult;
 import model.*;
 import results.*;
@@ -14,7 +15,7 @@ public class Client {
   private State state = State.SIGNEDOUT;
   private String username = null;
   private String authToken = null;
-  private HashMap<Integer, Integer> games = new HashMap<>();
+  private HashMap<Integer, Integer> listedGames = new HashMap<>();
 
   public Client(String serverUrl) {
     this.server = new ServerFacade(serverUrl);
@@ -121,13 +122,13 @@ public class Client {
       Collection<ListGamesData> games = response.games();
       StringBuilder message = new StringBuilder("Games:\n");
       int count = 1;
-      this.games.clear();
+      listedGames.clear();
       for (ListGamesData game : games) {
         String whiteName = game.whiteUsername() == null ? "None" : game.whiteUsername();
         String blackName = game.blackUsername() == null ? "None" : game.blackUsername();
         message.append(String.format("%d. %s, White Player: %s, Black Player: %s\n",
                 count, game.gameName(), whiteName, blackName));
-        this.games.put(count, game.gameID());
+        listedGames.put(count, game.gameID());
         count++;
       }
       return message.toString();
@@ -136,7 +137,26 @@ public class Client {
   }
 
   public String joinGame(String... params) throws ExceptionResult {
-    return "placeholder";
+    if (state == State.SIGNEDOUT) {
+      throw new ExceptionResult(400, "You must be logged in to join a game");
+    }
+    if (params.length >= 2) {
+      int gameID = Integer.parseInt(params[0]);
+      ChessGame.TeamColor teamColor;
+      if (params[1].equalsIgnoreCase("white")) {
+        teamColor = ChessGame.TeamColor.WHITE;
+      } else if (params[1].equalsIgnoreCase("black")) {
+        teamColor = ChessGame.TeamColor.BLACK;
+      } else {
+        throw new ExceptionResult(400, "Expected: join <ID> [WHITE|BLACK]");
+      }
+      SuccessResult response = server.joinGame(gameID, teamColor, authToken);
+      if (response != null) {
+        return String.format("%s joined game %d as %s", username, gameID, teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
+      }
+      throw new ExceptionResult(400, "Error: unable to join game");
+    }
+    throw new ExceptionResult(400, "Expected: join <ID> [WHITE|BLACK]");
   }
 
   public String observeGame(String... params) throws ExceptionResult {
