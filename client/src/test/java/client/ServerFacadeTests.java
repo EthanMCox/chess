@@ -1,18 +1,24 @@
 package client;
 
+import exception.ExceptionResult;
 import org.junit.jupiter.api.*;
+import results.*;
 import server.Server;
+import serverclientcommunication.ServerFacade;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
+    static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(0);
+        int port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterAll
@@ -20,10 +26,43 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-
+    @BeforeEach
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    @DisplayName("clear database")
+    public void clearDatabase() throws ExceptionResult {
+        assertDoesNotThrow(() -> assertInstanceOf(SuccessResult.class, facade.clear()));
     }
 
+
+    @Test
+    @DisplayName("register test")
+    public void registerSuccess() throws ExceptionResult {
+        LoginResult actual = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        LoginResult expected = new LoginResult("testUser", "authToken");
+        Assertions.assertEquals(expected.username(), actual.username());
+        Assertions.assertNotNull(actual.authToken());
+    }
+
+    @Test
+    @DisplayName("Tried to register same user twice")
+    public void registerTwice() throws ExceptionResult {
+        assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.register("testUser", "password123", "email@email.com"));
+        assertEquals(403, ex.statusCode());
+    }
+
+    @Test
+    @DisplayName("logout success")
+    public void logoutSuccess() throws ExceptionResult {
+        LoginResult loginResult = assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        assertDoesNotThrow(() -> assertInstanceOf(SuccessResult.class, facade.logout(loginResult.authToken())));
+    }
+
+    @Test
+    @DisplayName("logout with invalid auth")
+    public void logoutInvalidAuth() throws ExceptionResult {
+        assertDoesNotThrow(() -> facade.register("testUser", "password123", "email@email.com"));
+        ExceptionResult ex = assertThrows(ExceptionResult.class, () -> facade.logout("invalidAuth"));
+        assertEquals(401, ex.statusCode());
+    }
 }
