@@ -35,4 +35,10 @@ public class ServerFacade {
       CreateGameRequest request = new CreateGameRequest(gameName, authToken);
       return ClientCommunicator.makeRequest("POST", path, request, CreateGameResult.class, authToken);
     }
+
+    public ListGamesResult listGames(String authToken) throws ExceptionResult {
+      var path = serverUrl + "/game";
+      AuthRequest request = new AuthRequest(authToken);
+      return ClientCommunicator.makeRequest("GET", path, request, ListGamesResult.class, authToken);
+    }
 }

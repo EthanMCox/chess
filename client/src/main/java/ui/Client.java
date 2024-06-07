@@ -1,16 +1,20 @@
 package ui;
 
 import exception.ExceptionResult;
+import model.*;
 import results.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Client {
   private final ServerFacade server;
   private State state = State.SIGNEDOUT;
   private String username = null;
   private String authToken = null;
+  private HashMap<Integer, Integer> games = new HashMap<>();
 
   public Client(String serverUrl) {
     this.server = new ServerFacade(serverUrl);
@@ -101,7 +105,7 @@ public class Client {
       String gameName = params[0];
       CreateGameResult response = server.createGame(gameName, authToken);
       if (response != null) {
-        return String.format("Game %s created", response.gameID());
+        return String.format("%s created with ID %s", gameName, response.gameID());
       }
       throw new ExceptionResult(400, "Error: unable to create game");
     }
@@ -109,7 +113,26 @@ public class Client {
   }
 
   public String listGames() throws ExceptionResult {
-    return "placeholder";
+    if (state == State.SIGNEDOUT) {
+      throw new ExceptionResult(400, "You must be logged in to view games");
+    }
+    ListGamesResult response = server.listGames(authToken);
+    if (response != null) {
+      Collection<ListGamesData> games = response.games();
+      StringBuilder message = new StringBuilder("Games:\n");
+      int count = 1;
+      this.games.clear();
+      for (ListGamesData game : games) {
+        String whiteName = game.whiteUsername() == null ? "None" : game.whiteUsername();
+        String blackName = game.blackUsername() == null ? "None" : game.blackUsername();
+        message.append(String.format("%d. %s, White Player: %s, Black Player: %s\n",
+                count, game.gameName(), whiteName, blackName));
+        this.games.put(count, game.gameID());
+        count++;
+      }
+      return message.toString();
+    }
+    throw new ExceptionResult(400, "Error: unable to list games");
   }
 
   public String joinGame(String... params) throws ExceptionResult {
