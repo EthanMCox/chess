@@ -16,6 +16,8 @@ public class Client {
   private String username = null;
   private String authToken = null;
   private HashMap<Integer, Integer> listedGames = new HashMap<>();
+  private Integer joinedGame = null;
+  private boolean isObserver = false;
 
   public Client(String serverUrl) {
     this.server = new ServerFacade(serverUrl);
@@ -43,6 +45,9 @@ public class Client {
   }
 
   public String register(String... params) throws ExceptionResult {
+    if (state == State.SIGNEDIN) {
+      throw new ExceptionResult(400, "You are already logged in. Logout to switch accounts");
+    }
     if (params.length >= 3) {
       var username = params[0];
       var password = params[1];
@@ -141,7 +146,7 @@ public class Client {
       throw new ExceptionResult(400, "You must be logged in to join a game");
     }
     if (params.length >= 2) {
-      int gameID = Integer.parseInt(params[0]);
+      int gameID = listedGames.get(Integer.parseInt(params[0]));
       ChessGame.TeamColor teamColor;
       if (params[1].equalsIgnoreCase("white")) {
         teamColor = ChessGame.TeamColor.WHITE;
@@ -152,6 +157,7 @@ public class Client {
       }
       SuccessResult response = server.joinGame(gameID, teamColor, authToken);
       if (response != null) {
+        joinedGame = gameID;
         return String.format("%s joined game %d as %s", username, gameID, teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
       }
       throw new ExceptionResult(400, "Error: unable to join game");

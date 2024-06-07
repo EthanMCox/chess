@@ -45,7 +45,7 @@ public class ServerFacade {
 
     public SuccessResult joinGame(int gameID, ChessGame.TeamColor teamColor, String authToken) throws ExceptionResult {
       var path = serverUrl + "/game";
-      JoinGameRequest request = new JoinGameRequest(authToken, teamColor, gameID);
-      return ClientCommunicator.makeRequest("POST", path, request, SuccessResult.class, authToken);
+      JoinGameRequest request = new JoinGameRequest(null, teamColor, gameID);
+      return ClientCommunicator.makeRequest("PUT", path, request, SuccessResult.class, authToken);
     }
 }
