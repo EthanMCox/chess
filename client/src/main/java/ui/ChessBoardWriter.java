@@ -6,6 +6,7 @@ import exception.ExceptionResult;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Iterator;
 
 import static ui.EscapeSequences.*;
 
@@ -20,7 +21,7 @@ public class ChessBoardWriter {
 
     out.print(ERASE_SCREEN);
     ChessGame game = new ChessGame();
-    drawChessBoard(out, ChessGame.TeamColor.WHITE, game, new ChessPosition("b1"));
+    drawChessBoard(out, ChessGame.TeamColor.WHITE, game, new ChessPosition("f2"));
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
@@ -94,6 +95,7 @@ public class ChessBoardWriter {
       squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
       ChessPiece piece;
       boolean validMove = false;
+      boolean startingPosition = false;
       ChessPosition position;
       if (color == ChessGame.TeamColor.BLACK) {
         piece = squares[row][BOARD_SIZE_IN_SQUARES -1 - col];
@@ -103,6 +105,15 @@ public class ChessBoardWriter {
         position = new ChessPosition(BOARD_SIZE_IN_SQUARES - row, col + 1);
       }
       if (validMoves != null) {
+        // Check if the starting position is the same as the current square
+        Iterator<ChessMove> iterator = validMoves.iterator();
+        if (iterator.hasNext()) {
+          ChessMove firstMove = iterator.next();
+          if (firstMove.getStartPosition().equals(position)) {
+            startingPosition = true;
+          }
+        }
+        // Check if the current square is a valid move
         for (ChessMove move : validMoves) {
           if (move.getEndPosition().equals(position)) {
             validMove = true;
@@ -111,7 +122,7 @@ public class ChessBoardWriter {
         }
       }
 
-      drawSquare(out, piece, squareColor, validMove);
+      drawSquare(out, piece, squareColor, validMove, startingPosition);
     }
     setBorder(out);
     out.print(EMPTY);
@@ -122,7 +133,7 @@ public class ChessBoardWriter {
 
   }
 
-  private static void drawSquare(PrintStream out, ChessPiece piece, ChessGame.TeamColor squareColor, boolean validMove) {
+  private static void drawSquare(PrintStream out, ChessPiece piece, ChessGame.TeamColor squareColor, boolean validMove, boolean startingPosition) {
     if (squareColor == ChessGame.TeamColor.WHITE) {
       if (validMove) {
         out.print(SET_BG_COLOR_GREEN);
@@ -136,20 +147,23 @@ public class ChessBoardWriter {
         out.print(SET_BG_COLOR_BLACK);
       }
     }
+    if (startingPosition) {
+      out.print(SET_BG_COLOR_YELLOW);
+    }
     if (piece == null) {
       out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
     } else {
-      drawPiece(out, piece, validMove);
+      drawPiece(out, piece, validMove, startingPosition);
     }
   }
 
-  private static void drawPiece(PrintStream out, ChessPiece piece, boolean validMove) {
+  private static void drawPiece(PrintStream out, ChessPiece piece, boolean validMove, boolean startingPosition) {
     if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
       out.print(SET_TEXT_COLOR_RED);
     } else {
       out.print(SET_TEXT_COLOR_BLUE);
     }
-    if (validMove) {
+    if (validMove || startingPosition) {
       out.print(SET_TEXT_COLOR_BLACK);
     }
     switch (piece.getTeamColor()) {
