@@ -4,6 +4,7 @@ import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -17,25 +18,40 @@ public class ChessBoardWriter {
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     out.print(ERASE_SCREEN);
-    ChessBoard board = new ChessBoard();
-    board.resetBoard();
-    drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
+    ChessGame game = new ChessGame();
+    drawChessBoard(out, ChessGame.TeamColor.WHITE, game);
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
   }
 
-
   public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessBoard board) {
-    drawChessBoard(out, color, board, null);
+    ChessGame game = new ChessGame();
+    game.setBoard(board);
+    drawChessBoard(out, color, game);
   }
 
-  public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessBoard board, ChessPosition position) {
-    printHeadersOrFooters(out, color);
-    ChessPiece[][] squares = board.getSquares();
-    drawRows(out, color, squares);
+  public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessGame game) {
+    drawChessBoard(out, color, game, null);
+  }
+
+  public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessGame game, ChessPosition position) {
+    ChessBoard board = game.getBoard();
+    Collection<ChessMove> validMoves = null;
+    if (position != null) {
+      validMoves = getValidMoves(position, game);
+    }
 
     printHeadersOrFooters(out, color);
+
+    ChessPiece[][] squares = board.getSquares();
+    drawRows(out, color, squares, validMoves);
+
+    printHeadersOrFooters(out, color);
+  }
+
+  private static Collection<ChessMove> getValidMoves(ChessPosition position, ChessGame game) {
+    return game.validMoves(position);
   }
 
   private static void printHeadersOrFooters(PrintStream out, ChessGame.TeamColor color) {
@@ -57,16 +73,16 @@ public class ChessBoardWriter {
     out.println();
   }
 
-  private static void drawRows(PrintStream out, ChessGame.TeamColor color, ChessPiece[][] squares) {
+  private static void drawRows(PrintStream out, ChessGame.TeamColor color, ChessPiece[][] squares, Collection<ChessMove> validMoves) {
     ChessGame.TeamColor squareColor;
     squareColor = ChessGame.TeamColor.WHITE;
     for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
       squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
-      drawRow(out, row, color, squareColor, squares);
+      drawRow(out, row, color, squareColor, squares, validMoves);
     }
   }
 
-  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessGame.TeamColor squareColor ,ChessPiece[][] squares) {
+  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessGame.TeamColor squareColor ,ChessPiece[][] squares, Collection<ChessMove> validMoves) {
     setBorder(out);
     out.print(EMPTY);
     int rowNumber = color == ChessGame.TeamColor.BLACK ? row + 1 : BOARD_SIZE_IN_SQUARES - row;
@@ -76,11 +92,15 @@ public class ChessBoardWriter {
     for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
       squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
       ChessPiece piece;
+      boolean validMove = false;
       if (color == ChessGame.TeamColor.BLACK) {
         piece = squares[row][BOARD_SIZE_IN_SQUARES -1 - col];
+
       } else {
         piece = squares[BOARD_SIZE_IN_SQUARES - 1 - row][col];
       }
+
+
       drawSquare(out, piece, squareColor);
     }
     setBorder(out);
