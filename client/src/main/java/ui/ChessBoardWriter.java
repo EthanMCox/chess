@@ -21,7 +21,7 @@ public class ChessBoardWriter {
 
     out.print(ERASE_SCREEN);
     ChessGame game = new ChessGame();
-    drawChessBoard(out, ChessGame.TeamColor.BLACK, game, new ChessPosition("g8"));
+    drawChessBoard(out, ChessGame.TeamColor.BLACK, game, new ChessPosition("g4"));
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
@@ -104,7 +104,7 @@ public class ChessBoardWriter {
         piece = squares[BOARD_SIZE_IN_SQUARES - 1 - row][col];
         currentBoardPosition = new ChessPosition(BOARD_SIZE_IN_SQUARES - row, col + 1);
       }
-      if (currentBoardPosition.equals(pieceLocation)) {
+      if (currentBoardPosition.equals(pieceLocation) && squares[pieceLocation.getRow()-1][pieceLocation.getColumn()-1] != null) {
         startingPosition = true;
       }
       if (validMoves != null) {
