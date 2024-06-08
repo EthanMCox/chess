@@ -1,8 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +26,11 @@ public class ChessBoardWriter {
   }
 
 
-
   public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessBoard board) {
+    drawChessBoard(out, color, board, null);
+  }
+
+  public static void drawChessBoard(PrintStream out, ChessGame.TeamColor color, ChessBoard board, ChessPosition position) {
     printHeadersOrFooters(out, color);
     ChessPiece[][] squares = board.getSquares();
     drawRows(out, color, squares);

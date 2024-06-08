@@ -1,5 +1,7 @@
 package chess;
 
+import exception.ExceptionResult;
+
 import java.util.Objects;
 
 /**
@@ -18,9 +20,20 @@ public class ChessPosition {
     this.col = col;
   }
 
-//  public ChessPosition(String position) {
-//
-//  }
+  public ChessPosition(String position) throws ExceptionResult {
+    if (position.length() != 2) {
+      throw new ExceptionResult(400, "Invalid position");
+    }
+    String col = position.substring(0, 1).toLowerCase();
+    if (col.charAt(0) < 'a' || col.charAt(0) > 'h') {
+      throw new ExceptionResult(400, "Invalid position");
+    }
+    if (!Character.isDigit(position.charAt(1))) {
+      throw new ExceptionResult(400, "Invalid position");
+    }
+    this.row = Integer.parseInt(position.substring(1));
+    this.col = col.charAt(0) - 'a' + 1;
+  }
 
     /**
      * @return which row this position is in
