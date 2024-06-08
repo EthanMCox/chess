@@ -21,7 +21,7 @@ public class ChessBoardWriter {
 
     out.print(ERASE_SCREEN);
     ChessGame game = new ChessGame();
-    drawChessBoard(out, ChessGame.TeamColor.WHITE, game, new ChessPosition("f2"));
+    drawChessBoard(out, ChessGame.TeamColor.BLACK, game, new ChessPosition("g8"));
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);
@@ -47,7 +47,7 @@ public class ChessBoardWriter {
     printHeadersOrFooters(out, color);
 
     ChessPiece[][] squares = board.getSquares();
-    drawRows(out, color, squares, validMoves);
+    drawRows(out, color, squares, validMoves, position);
 
     printHeadersOrFooters(out, color);
   }
@@ -75,16 +75,16 @@ public class ChessBoardWriter {
     out.println();
   }
 
-  private static void drawRows(PrintStream out, ChessGame.TeamColor color, ChessPiece[][] squares, Collection<ChessMove> validMoves) {
+  private static void drawRows(PrintStream out, ChessGame.TeamColor color, ChessPiece[][] squares, Collection<ChessMove> validMoves, ChessPosition position) {
     ChessGame.TeamColor squareColor;
     squareColor = ChessGame.TeamColor.WHITE;
     for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
       squareColor = squareColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
-      drawRow(out, row, color, squareColor, squares, validMoves);
+      drawRow(out, row, color, squareColor, squares, validMoves, position);
     }
   }
 
-  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessGame.TeamColor squareColor ,ChessPiece[][] squares, Collection<ChessMove> validMoves) {
+  private static void drawRow(PrintStream out, int row, ChessGame.TeamColor color, ChessGame.TeamColor squareColor ,ChessPiece[][] squares, Collection<ChessMove> validMoves, ChessPosition pieceLocation) {
     setBorder(out);
     out.print(EMPTY);
     int rowNumber = color == ChessGame.TeamColor.BLACK ? row + 1 : BOARD_SIZE_IN_SQUARES - row;
@@ -96,26 +96,21 @@ public class ChessBoardWriter {
       ChessPiece piece;
       boolean validMove = false;
       boolean startingPosition = false;
-      ChessPosition position;
+      ChessPosition currentBoardPosition;
       if (color == ChessGame.TeamColor.BLACK) {
         piece = squares[row][BOARD_SIZE_IN_SQUARES -1 - col];
-        position = new ChessPosition(row + 1, BOARD_SIZE_IN_SQUARES - col);
+        currentBoardPosition = new ChessPosition(row + 1, BOARD_SIZE_IN_SQUARES - col);
       } else {
         piece = squares[BOARD_SIZE_IN_SQUARES - 1 - row][col];
-        position = new ChessPosition(BOARD_SIZE_IN_SQUARES - row, col + 1);
+        currentBoardPosition = new ChessPosition(BOARD_SIZE_IN_SQUARES - row, col + 1);
+      }
+      if (currentBoardPosition.equals(pieceLocation)) {
+        startingPosition = true;
       }
       if (validMoves != null) {
-        // Check if the starting position is the same as the current square
-        Iterator<ChessMove> iterator = validMoves.iterator();
-        if (iterator.hasNext()) {
-          ChessMove firstMove = iterator.next();
-          if (firstMove.getStartPosition().equals(position)) {
-            startingPosition = true;
-          }
-        }
         // Check if the current square is a valid move
         for (ChessMove move : validMoves) {
-          if (move.getEndPosition().equals(position)) {
+          if (move.getEndPosition().equals(currentBoardPosition)) {
             validMove = true;
             break;
           }
