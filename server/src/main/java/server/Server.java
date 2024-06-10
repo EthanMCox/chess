@@ -19,6 +19,7 @@ public class Server {
     private UserService userService;
     private GameService gameService;
     private ClearService clearService;
+    private WebsocketService websocketService;
 
     public Server() {
         try {
@@ -28,10 +29,11 @@ public class Server {
         }
     }
 
-    public Server(UserService userService, GameService gameService, ClearService clearService)  {
+    public Server(UserService userService, GameService gameService, ClearService clearService, WebsocketService websocketService) {
         this.userService = userService;
         this.gameService = gameService;
         this.clearService = clearService;
+        this.websocketService = websocketService;
     }
 
     private void setUpServices() throws ExceptionResult, DataAccessException {
@@ -51,6 +53,7 @@ public class Server {
         this.userService = new UserService(userDAO, authDAO);
         this.gameService = new GameService(gameDAO, authDAO);
         this.clearService = new ClearService(userDAO, gameDAO, authDAO);
+        this.websocketService = new WebsocketService(userDAO, gameDAO, authDAO);
     }
 
     public int run(int desiredPort) {
