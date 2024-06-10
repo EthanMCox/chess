@@ -2,7 +2,8 @@ package ui.websocket;
 
 import com.google.gson.Gson;
 import exception.ExceptionResult;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
+import websocket.commands.*;
 
 import javax.websocket.Endpoint;
 import javax.websocket.*;
@@ -38,6 +39,27 @@ public class WebsocketCommunicator extends Endpoint {
 
   @Override
   public void onOpen(Session session, EndpointConfig endpointConfig) {
+  }
+
+  public void connectToGame(String authToken, Integer gameID) throws ExceptionResult {
+    try {
+      ConnectCommand command = new ConnectCommand(authToken, gameID);
+      this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    } catch (IOException e) {
+      throw new ExceptionResult(500, e.getMessage());
+    }
+  }
+
+  public void makeMove() {
+
+  }
+
+  public void leaveGame() {
+
+  }
+
+  public void resign() {
+
   }
 
 }
