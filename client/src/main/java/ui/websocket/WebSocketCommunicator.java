@@ -1,5 +1,6 @@
 package ui.websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ExceptionResult;
 import websocket.messages.*;
@@ -11,11 +12,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WebsocketCommunicator extends Endpoint {
+public class WebSocketCommunicator extends Endpoint {
   Session session;
   NotificationHandler notificationHandler;
 
-  public WebsocketCommunicator(String url, NotificationHandler notificationHandler) throws ExceptionResult {
+  public WebSocketCommunicator(String url, NotificationHandler notificationHandler) throws ExceptionResult {
     try {
       url = url.replace("http", "ws");
       URI socketURI = new URI(url + "/ws");
@@ -50,16 +51,31 @@ public class WebsocketCommunicator extends Endpoint {
     }
   }
 
-  public void makeMove() {
-
+  public void makeMove(String authToken, Integer gameID, ChessMove move) throws ExceptionResult {
+    try {
+      MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
+      this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    } catch (IOException e) {
+      throw new ExceptionResult(500, e.getMessage());
+    }
   }
 
-  public void leaveGame() {
-
+  public void leaveGame(String authToken, Integer gameID) throws ExceptionResult{
+    try {
+      LeaveCommand command = new LeaveCommand(authToken, gameID);
+      this.session.getBasicRemote().sendText(new Gson().toJson(command));
+      this.session.close();
+    } catch (IOException e) {
+      throw new ExceptionResult(500, e.getMessage());
+    }
   }
 
-  public void resign() {
-
+  public void resign(String authToken, Integer gameID) throws ExceptionResult {
+    try {
+      ResignCommand command = new ResignCommand(authToken, gameID);
+      this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    } catch (IOException e) {
+      throw new ExceptionResult(500, e.getMessage());
+    }
   }
-
 }
