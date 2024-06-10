@@ -11,8 +11,9 @@ import results.SuccessResult;
 import service.*;
 import spark.*;
 import util.JsonSerializer;
+import server.websocket.WebSocketHandler;
 
-import java.sql.SQLException;
+
 import java.util.Map;
 
 public class Server {
@@ -20,6 +21,7 @@ public class Server {
     private GameService gameService;
     private ClearService clearService;
     private WebsocketService websocketService;
+    private WebSocketHandler webSocketHandler;
 
     public Server() {
         try {
@@ -34,6 +36,7 @@ public class Server {
         this.gameService = gameService;
         this.clearService = clearService;
         this.websocketService = websocketService;
+        this.webSocketHandler = new WebSocketHandler(websocketService);
     }
 
     private void setUpServices() throws ExceptionResult, DataAccessException {
@@ -54,6 +57,7 @@ public class Server {
         this.gameService = new GameService(gameDAO, authDAO);
         this.clearService = new ClearService(userDAO, gameDAO, authDAO);
         this.websocketService = new WebsocketService(userDAO, gameDAO, authDAO);
+        this.webSocketHandler = new WebSocketHandler(websocketService);
     }
 
     public int run(int desiredPort) {
@@ -81,6 +85,7 @@ public class Server {
       Spark.get("/game", this::listGames);
       Spark.post("/game", this::createGame);
       Spark.put("/game", this::joinGame);
+      Spark.webSocket("/connect", webSocketHandler);
       Spark.notFound("<html><body><h1>404 Error: Not Found</h1></body></html>");
     }
 
