@@ -8,7 +8,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Map;
 
-public class ClientCommunicator {
+public class HttpCommunicator {
 
   public static <T> T makeRequest (String method, String urlPath, Object request, Class<T> responseClass,
                                    String authToken) throws ExceptionResult {
