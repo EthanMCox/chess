@@ -42,7 +42,12 @@ public class Client {
         case "list" -> listGames();
         case "join" -> joinGame(params);
         case "observe" -> observeGame(params);
-        case "quit" -> "quit";
+        case "redraw" -> redraw();
+        case "move" -> makeMove(params);
+        case "highlight" -> highlightMoves(params);
+        case "leave" -> leaveGame();
+        case "resign" -> resignGame();
+        case "quit" -> quit();
         default -> help();
       };
     } catch (ExceptionResult ex) {
@@ -215,6 +220,30 @@ public class Client {
       return String.format("%s is observing game %d", username, Integer.parseInt(params[0]));
     }
     throw new ExceptionResult(400, "Expected: observe <ID>");
+  }
+
+  public String redraw() {
+    return "placeholder";
+  }
+
+  public String makeMove(String... params) {
+    return "placeholder";
+  }
+
+  public String highlightMoves(String... params) {
+    return "placeholder";
+  }
+
+  public String leaveGame() {
+    return "placeholder";
+  }
+
+  public String resignGame() {
+    return "placeholder";
+  }
+
+  public String quit() {
+    return "quit";
   }
 
   public String help() {
