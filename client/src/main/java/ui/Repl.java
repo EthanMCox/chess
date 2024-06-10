@@ -10,7 +10,7 @@ public class Repl implements NotificationHandler {
   private final Client client;
 
   public Repl(String serverUrl) {
-    client = new Client(serverUrl);
+    client = new Client(serverUrl, this);
   }
 
   public void run() {

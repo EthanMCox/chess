@@ -6,6 +6,7 @@ import exception.ExceptionResult;
 import model.*;
 import results.*;
 import serverclientcommunication.ServerFacade;
+import ui.websocket.NotificationHandler;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -21,9 +22,11 @@ public class Client {
   private HashMap<Integer, Integer> listedGames = null;
   private Integer joinedGame = null;
   private boolean isObserver = false;
+  private final NotificationHandler notificationHandler;
 
-  public Client(String serverUrl) {
+  public Client(String serverUrl, NotificationHandler notificationHandler) {
     this.server = new ServerFacade(serverUrl);
+    this.notificationHandler = notificationHandler;
   }
 
   public String eval(String input) {
@@ -223,7 +226,7 @@ public class Client {
           quit - playing chess
           help - with possible commands
           """;
-    } else {
+    } else if(state == State.SIGNEDIN){
       return """
           Commands:
           create <gameName> - a game
@@ -232,6 +235,18 @@ public class Client {
           observe <ID> - a game
           logout - when you are done
           quit - playing chess
+          help - with possible commands
+          """;
+    } else {
+      return """
+          Commands:
+          redraw - the board
+          move <from> <to> -> <promotionPiece> - a piece
+              Ex: move e7 e8 -> q OR move f2 f4
+          highlight <position> - legal moves
+              Ex: highlight c5
+          leave - the game
+          resign - the game
           help - with possible commands
           """;
     }
