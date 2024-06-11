@@ -32,6 +32,13 @@ public class WebSocketHandler {
       saveSession(session, command.getGameID());
 
       switch (command.getCommandType()) {
+        case CONNECT -> command = JsonSerializer.deserialize(message, ConnectCommand.class);
+        case MAKE_MOVE -> command = JsonSerializer.deserialize(message, MakeMoveCommand.class);
+        case LEAVE -> command = JsonSerializer.deserialize(message, LeaveCommand.class);
+        case RESIGN -> command = JsonSerializer.deserialize(message, ResignCommand.class);
+      }
+
+      switch (command.getCommandType()) {
         case CONNECT -> websocketService.connect(session, (ConnectCommand) command, connections);
         case MAKE_MOVE -> websocketService.makeMove(session, (MakeMoveCommand) command, connections);
         case LEAVE -> websocketService.leaveGame(session, (LeaveCommand) command, connections);

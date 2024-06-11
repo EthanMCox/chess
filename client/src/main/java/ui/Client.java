@@ -202,8 +202,7 @@ public class Client {
         ws = new WebSocketCommunicator(serverUrl, notificationHandler);
         ws.connectToGame(authToken, gameID);
         joinedGame = gameID;
-
-        return String.format("%s joined game %d as %s", username, Integer.parseInt(params[0]), teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
+        return "";
       }
       throw new ExceptionResult(400, "Error: unable to join game");
     }
