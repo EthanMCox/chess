@@ -85,7 +85,7 @@ public class Server {
       Spark.get("/game", this::listGames);
       Spark.post("/game", this::createGame);
       Spark.put("/game", this::joinGame);
-      Spark.webSocket("/connect", webSocketHandler);
+      Spark.webSocket("/ws", webSocketHandler);
       Spark.notFound("<html><body><h1>404 Error: Not Found</h1></body></html>");
     }
 
