@@ -12,6 +12,7 @@ import websocket.commands.*;
 import websocket.messages.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -61,11 +62,25 @@ public class WebsocketService {
     // Stub
   }
 
+  private void broadcast(Integer gameID, ServerMessage notification, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
+    broadcast(gameID, notification, connections, null);
+  }
+
   private void broadcast(Integer gameID, ServerMessage notification, Map<Integer, HashSet<Session>> connections, Session excludedSession) throws ExceptionResult {
-    for (var c : connections.get(gameID)) {
-      if (c.isOpen() && !c.equals(excludedSession)) {
-        sendMessage(c, notification);
+    var removeList = new ArrayList<Session>();
+    for (var session : connections.get(gameID)) {
+      if (session.isOpen()) {
+        if (!session.equals(excludedSession)) {
+          sendMessage(session, notification);
+        }
+      } else {
+        removeList.add(session);
       }
+    }
+
+    // Clean up sessions that have been closed in the game
+    for (var session : removeList) {
+      connections.get(gameID).remove(session);
     }
   }
 
