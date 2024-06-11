@@ -8,6 +8,7 @@ import util.JsonSerializer;
 import websocket.commands.*;
 import exception.ExceptionResult;
 import websocket.messages.ErrorMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class WebSocketHandler {
     }
   }
 
-  private void sendMessage(Session session, Object message) throws ExceptionResult {
+  private void sendMessage(Session session, ServerMessage message) throws ExceptionResult {
     try {
       session.getRemote().sendString(JsonSerializer.serialize(message));
     } catch (IOException e) {

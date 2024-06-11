@@ -232,7 +232,15 @@ public class Client {
   }
 
   public String redraw() {
-    return "placeholder";
+    if (role == GameRole.NONE) {
+      return "You are not in a game";
+    }
+    if (game == null) {
+      return "Error: no game available to redraw";
+    }
+    ChessGame.TeamColor teamColor = role == GameRole.BLACK ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+    ChessBoardWriter.drawChessBoard(System.out, teamColor, game.getBoard());
+    return "";
   }
 
   public String makeMove(String... params) {
