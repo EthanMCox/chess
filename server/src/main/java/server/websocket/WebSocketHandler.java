@@ -26,18 +26,14 @@ public class WebSocketHandler {
     try {
       UserGameCommand command = JsonSerializer.deserialize(message, UserGameCommand.class);
 
-//      String username = getUsername(command.getAuthString());
-      String username = "placeholder";
       switch (command.getCommandType()) {
-        case CONNECT -> websocketService.connect(session, username, (ConnectCommand) command, connections);
-        case MAKE_MOVE -> websocketService.makeMove(session, username, (MakeMoveCommand) command, connections);
-        case LEAVE -> websocketService.leaveGame(session, username, (LeaveCommand) command, connections);
-        case RESIGN -> websocketService.resign(session, username, (ResignCommand) command, connections);
+        case CONNECT -> websocketService.connect(session, (ConnectCommand) command, connections);
+        case MAKE_MOVE -> websocketService.makeMove(session, (MakeMoveCommand) command, connections);
+        case LEAVE -> websocketService.leaveGame(session, (LeaveCommand) command, connections);
+        case RESIGN -> websocketService.resign(session, (ResignCommand) command, connections);
       }
-      // Get rid of this later
-      throw new ExceptionResult(400, "Not implemented");
     } catch (ExceptionResult e) {
-      // Potentially refactor this
+      // Send message on error here
       e.printStackTrace();
     }
   }
