@@ -43,7 +43,7 @@ public class WebsocketService {
       role = "an observer";
     }
     var message = String.format("%s has joined the game as %s", username, role);
-    ServerMessage Notification = new Notification(message);
+    ServerMessage Notification = new NotificationMessage(message);
   }
 
   public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections) {

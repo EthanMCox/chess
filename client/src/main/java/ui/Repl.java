@@ -1,10 +1,12 @@
 package ui;
 
+import chess.ChessGame;
 import ui.websocket.NotificationHandler;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
+import ui.ChessBoardWriter;
 
 public class Repl implements NotificationHandler {
   private final Client client;
@@ -39,13 +41,29 @@ public class Repl implements NotificationHandler {
 
   public void notify(ServerMessage message) {
     // Update this letter with actual notify code
-//    switch (message.getServerMessageType()) {
-//      case NOTIFICATION -> displayNotification(((NotificationMessage) message).getMessage());
-//      case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
-//      case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
-//    }
+    switch (message.getServerMessageType()) {
+      case NOTIFICATION -> displayNotification(((NotificationMessage) message).getMessage());
+      case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
+      case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
+    }
+    // Might need this later, but test
+//    printPrompt();
+  }
+
+  private void displayNotification(String message) {
+    System.out.println(SET_TEXT_COLOR_BLUE + message);
+    System.out.println();
+  }
+
+  private void displayError(String message) {
     System.out.println(SET_TEXT_COLOR_RED + message);
-    printPrompt();
+    System.out.println();
+  }
+
+  private void loadGame(ChessGame game) {
+    // Will need a way to send the color to pass into drawChessBoard
+    ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.WHITE, game);
+    System.out.println();
   }
 
 }
