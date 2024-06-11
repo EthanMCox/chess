@@ -28,6 +28,8 @@ public class WebSocketHandler {
     try {
       UserGameCommand command = JsonSerializer.deserialize(message, UserGameCommand.class);
 
+      saveSession(session, command.getGameID());
+
       switch (command.getCommandType()) {
         case CONNECT -> websocketService.connect(session, (ConnectCommand) command, connections);
         case MAKE_MOVE -> websocketService.makeMove(session, (MakeMoveCommand) command, connections);
