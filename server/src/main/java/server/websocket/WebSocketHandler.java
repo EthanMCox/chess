@@ -50,4 +50,13 @@ public class WebSocketHandler {
       throw new ExceptionResult(500, e.getMessage());
     }
   }
+
+  private void saveSession(Session session, Integer gameID) {
+    if (gameID != null) {
+      if (!connections.containsKey(gameID)) {
+        connections.put(gameID, new HashSet<>());
+      }
+      connections.get(gameID).add(session);
+    }
+  }
 }
