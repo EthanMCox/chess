@@ -7,7 +7,9 @@ import service.WebsocketService;
 import util.JsonSerializer;
 import websocket.commands.*;
 import exception.ExceptionResult;
+import websocket.messages.ErrorMessage;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,7 +24,7 @@ public class WebSocketHandler {
   }
 
   @OnWebSocketMessage
-  public void onMessage(Session session, String message) { // Message is a JSON string representing a command object
+  public void onMessage(Session session, String message) throws ExceptionResult { // Message is a JSON string representing a command object
     try {
       UserGameCommand command = JsonSerializer.deserialize(message, UserGameCommand.class);
 
@@ -33,8 +35,17 @@ public class WebSocketHandler {
         case RESIGN -> websocketService.resign(session, (ResignCommand) command, connections);
       }
     } catch (ExceptionResult e) {
-      // Send message on error here
-      e.printStackTrace();
+      sendMessage(session, new ErrorMessage("Error: " + e.getMessage()));
+    } catch (Exception e) {
+      throw new ExceptionResult(500, e.getMessage());
+    }
+  }
+
+  private void sendMessage(Session session, Object message) throws ExceptionResult {
+    try {
+      session.getRemote().sendString(JsonSerializer.serialize(message));
+    } catch (IOException e) {
+      throw new ExceptionResult(500, e.getMessage());
     }
   }
 }
