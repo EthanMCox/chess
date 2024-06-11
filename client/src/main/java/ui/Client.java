@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPosition;
 import exception.ExceptionResult;
 import model.*;
 import results.*;
@@ -233,7 +234,7 @@ public class Client {
 
   public String redraw() {
     if (role == GameRole.NONE) {
-      return "You are not in a game";
+      return "You must join a game to redraw the board";
     }
     if (game == null) {
       return "Error: no game available to redraw";
@@ -247,8 +248,24 @@ public class Client {
     return "placeholder";
   }
 
-  public String highlightMoves(String... params) {
-    return "placeholder";
+  public String highlightMoves(String... params) throws ExceptionResult {
+    if (role == GameRole.NONE) {
+      return "You must join a game to highlight moves";
+    }
+    if (game == null) {
+      return "Error: no game available to highlight moves";
+    }
+    if (params.length >= 1) {
+      ChessPosition position;
+      try {
+        position = new ChessPosition(params[0]);
+      } catch (ExceptionResult ex) {
+        return "Error: " + ex.getMessage();
+      }
+      ChessGame.TeamColor teamColor = role == GameRole.BLACK ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+      ChessBoardWriter.drawChessBoard(System.out, teamColor, game, position);
+    }
+    return "";
   }
 
   public String leaveGame() {

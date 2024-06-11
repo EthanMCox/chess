@@ -28,7 +28,7 @@ public class ChessPosition {
     if (col.charAt(0) < 'a' || col.charAt(0) > 'h') {
       throw new ExceptionResult(400, "Invalid position");
     }
-    if (!Character.isDigit(position.charAt(1))) {
+    if (!Character.isDigit(position.charAt(1)) || Integer.parseInt(position.substring(1)) < 1 || Integer.parseInt(position.substring(1)) > 8) {
       throw new ExceptionResult(400, "Invalid position");
     }
     this.row = Integer.parseInt(position.substring(1));
