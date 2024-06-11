@@ -18,7 +18,7 @@ import java.util.Map;
 @WebSocket
 public class WebSocketHandler {
   private WebsocketService websocketService;
-  private final Map<Integer, HashMap<Session, String>> connections = new HashMap<>();
+  private final Map<Integer, HashSet<Session>> connections = new HashMap<>();
 
   public WebSocketHandler(WebsocketService websocketService) {
     this.websocketService = websocketService;
@@ -29,7 +29,7 @@ public class WebSocketHandler {
     try {
       UserGameCommand command = JsonSerializer.deserialize(message, UserGameCommand.class);
 
-      saveSession(session, command.getGameID(), command.getAuthString());
+      saveSession(session, command.getGameID());
 
       switch (command.getCommandType()) {
         case CONNECT -> websocketService.connect(session, (ConnectCommand) command, connections);
@@ -38,26 +38,18 @@ public class WebSocketHandler {
         case RESIGN -> websocketService.resign(session, (ResignCommand) command, connections);
       }
     } catch (ExceptionResult e) {
-      sendMessage(session, new ErrorMessage("Error: " + e.getMessage()));
+      websocketService.sendMessage(session, new ErrorMessage("Error: " + e.getMessage()));
     } catch (Exception e) {
       throw new ExceptionResult(500, e.getMessage());
     }
   }
 
-  private void sendMessage(Session session, ServerMessage message) throws ExceptionResult {
-    try {
-      session.getRemote().sendString(JsonSerializer.serialize(message));
-    } catch (IOException e) {
-      throw new ExceptionResult(500, e.getMessage());
-    }
-  }
-
-  private void saveSession(Session session, Integer gameID, String authToken) {
+  private void saveSession(Session session, Integer gameID) {
     if (gameID != null) {
       if (!connections.containsKey(gameID)) {
-        connections.put(gameID, new HashMap<>());
+        connections.put(gameID, new HashSet<>());
       }
-      connections.get(gameID).put(session, authToken);
+      connections.get(gameID).add(session);
     }
   }
 }

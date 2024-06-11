@@ -7,10 +7,11 @@ import dataaccess.UserDAO;
 import exception.ExceptionResult;
 import model.*;
 import org.eclipse.jetty.websocket.api.Session;
+import util.JsonSerializer;
 import websocket.commands.*;
 import websocket.messages.*;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class WebsocketService {
     this.userDAO = userDAO;
   }
 
-  public void connect(Session session, ConnectCommand command, Map<Integer, HashMap<Session, String>> connections) throws ExceptionResult {
-    connections.get(command.getGameID()).put(session, command.getAuthString());
+  public void connect(Session session, ConnectCommand command, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
+    connections.get(command.getGameID()).add(session);
     AuthData auth = authDAO.getAuth(command.getAuthString());
     if (auth == null) {
       throw new ExceptionResult(401, "Error: unauthorized");
@@ -44,18 +45,35 @@ public class WebsocketService {
       role = "an observer";
     }
     var message = String.format("%s has joined the game as %s", username, role);
-    ServerMessage Notification = new NotificationMessage(message);
+    ServerMessage notification = new NotificationMessage(message);
+    broadcast(command.getGameID(), notification, connections, session);
   }
 
-  public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashMap<Session, String>> connections) {
+  public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections) {
     // Stub
   }
 
-  public void leaveGame(Session session, LeaveCommand command, Map<Integer, HashMap<Session, String>> connections) {
+  public void leaveGame(Session session, LeaveCommand command, Map<Integer, HashSet<Session>> connections) {
     // Stub
   }
 
-  public void resign(Session session, ResignCommand command, Map<Integer, HashMap<Session, String>> connections) {
+  public void resign(Session session, ResignCommand command, Map<Integer, HashSet<Session>> connections) {
     // Stub
+  }
+
+  private void broadcast(Integer gameID, ServerMessage notification, Map<Integer, HashSet<Session>> connections, Session excludedSession) throws ExceptionResult {
+    for (var c : connections.get(gameID)) {
+      if (c.isOpen() && !c.equals(excludedSession)) {
+        sendMessage(c, notification);
+      }
+    }
+  }
+
+  public void sendMessage(Session session, ServerMessage message) throws ExceptionResult {
+    try {
+      session.getRemote().sendString(JsonSerializer.serialize(message));
+    } catch (IOException e) {
+      throw new ExceptionResult(500, e.getMessage());
+    }
   }
 }
