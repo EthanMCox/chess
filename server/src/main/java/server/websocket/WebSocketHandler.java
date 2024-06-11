@@ -28,32 +28,17 @@ public class WebSocketHandler {
 
 //      String username = getUsername(command.getAuthString());
       String username = "placeholder";
-      throw new ExceptionResult(400, "Not implemented");
       switch (command.getCommandType()) {
-        case CONNECT -> connect(session, username, (ConnectCommand) command);
-        case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
-        case LEAVE -> leaveGame(session, username, (LeaveCommand) command);
-        case RESIGN -> resign(session, username, (ResignCommand) command);
+        case CONNECT -> websocketService.connect(session, username, (ConnectCommand) command, connections);
+        case MAKE_MOVE -> websocketService.makeMove(session, username, (MakeMoveCommand) command, connections);
+        case LEAVE -> websocketService.leaveGame(session, username, (LeaveCommand) command, connections);
+        case RESIGN -> websocketService.resign(session, username, (ResignCommand) command, connections);
       }
+      // Get rid of this later
+      throw new ExceptionResult(400, "Not implemented");
     } catch (ExceptionResult e) {
       // Potentially refactor this
       e.printStackTrace();
     }
-  }
-
-  private void connect(Session session, String username, ConnectCommand command) {
-    // Stub
-  }
-
-  private void makeMove(Session session, String username, MakeMoveCommand command) {
-    // Stub
-  }
-
-  private void leaveGame(Session session, String username, LeaveCommand command) {
-    // Stub
-  }
-
-  private void resign(Session session, String username, ResignCommand command) {
-    // Stub
   }
 }
