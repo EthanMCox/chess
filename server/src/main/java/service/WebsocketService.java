@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.*;
 import websocket.messages.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -25,8 +26,8 @@ public class WebsocketService {
     this.userDAO = userDAO;
   }
 
-  public void connect(Session session, ConnectCommand command, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
-    connections.get(command.getGameID()).add(session);
+  public void connect(Session session, ConnectCommand command, Map<Integer, HashMap<Session, String>> connections) throws ExceptionResult {
+    connections.get(command.getGameID()).put(session, command.getAuthString());
     AuthData auth = authDAO.getAuth(command.getAuthString());
     if (auth == null) {
       throw new ExceptionResult(401, "Error: unauthorized");
@@ -46,15 +47,15 @@ public class WebsocketService {
     ServerMessage Notification = new NotificationMessage(message);
   }
 
-  public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections) {
+  public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashMap<Session, String>> connections) {
     // Stub
   }
 
-  public void leaveGame(Session session, LeaveCommand command, Map<Integer, HashSet<Session>> connections) {
+  public void leaveGame(Session session, LeaveCommand command, Map<Integer, HashMap<Session, String>> connections) {
     // Stub
   }
 
-  public void resign(Session session, ResignCommand command, Map<Integer, HashSet<Session>> connections) {
+  public void resign(Session session, ResignCommand command, Map<Integer, HashMap<Session, String>> connections) {
     // Stub
   }
 }

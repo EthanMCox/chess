@@ -18,7 +18,7 @@ import java.util.Map;
 @WebSocket
 public class WebSocketHandler {
   private WebsocketService websocketService;
-  private final Map<Integer, HashSet<Session>> connections = new HashMap<>();
+  private final Map<Integer, HashMap<Session, String>> connections = new HashMap<>();
 
   public WebSocketHandler(WebsocketService websocketService) {
     this.websocketService = websocketService;
@@ -29,7 +29,7 @@ public class WebSocketHandler {
     try {
       UserGameCommand command = JsonSerializer.deserialize(message, UserGameCommand.class);
 
-      saveSession(session, command.getGameID());
+      saveSession(session, command.getGameID(), command.getAuthString());
 
       switch (command.getCommandType()) {
         case CONNECT -> websocketService.connect(session, (ConnectCommand) command, connections);
@@ -52,12 +52,12 @@ public class WebSocketHandler {
     }
   }
 
-  private void saveSession(Session session, Integer gameID) {
+  private void saveSession(Session session, Integer gameID, String authToken) {
     if (gameID != null) {
       if (!connections.containsKey(gameID)) {
-        connections.put(gameID, new HashSet<>());
+        connections.put(gameID, new HashMap<>());
       }
-      connections.get(gameID).add(session);
+      connections.get(gameID).put(session, authToken);
     }
   }
 }

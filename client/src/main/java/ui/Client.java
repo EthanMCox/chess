@@ -8,6 +8,7 @@ import model.*;
 import results.*;
 import serverclientcommunication.ServerFacade;
 import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketCommunicator;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 
 public class Client {
   private final ServerFacade server;
+  private String serverUrl;
   private State state = State.SIGNEDOUT;
   private String username = null;
   private String authToken = null;
@@ -25,6 +27,7 @@ public class Client {
   private boolean isObserver = false;
   private GameRole role = GameRole.NONE;
   private ChessGame game = null;
+  private WebSocketCommunicator ws = null;
 
   public enum GameRole {
     WHITE,
@@ -36,6 +39,7 @@ public class Client {
 
   public Client(String serverUrl, NotificationHandler notificationHandler) {
     this.server = new ServerFacade(serverUrl);
+    this.serverUrl = serverUrl;
     this.notificationHandler = notificationHandler;
   }
 
@@ -195,12 +199,10 @@ public class Client {
       }
       SuccessResult response = server.joinGame(gameID, teamColor, authToken);
       if (response != null) {
+        ws = new WebSocketCommunicator(serverUrl, notificationHandler);
+        ws.connectToGame(authToken, gameID);
         joinedGame = gameID;
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
-        ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.BLACK, board);
+
         return String.format("%s joined game %d as %s", username, Integer.parseInt(params[0]), teamColor == ChessGame.TeamColor.WHITE ? "White" : "Black");
       }
       throw new ExceptionResult(400, "Error: unable to join game");
