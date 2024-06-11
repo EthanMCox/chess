@@ -8,10 +8,14 @@ import util.JsonSerializer;
 import websocket.commands.UserGameCommand;
 import exception.ExceptionResult;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 @WebSocket
 public class WebSocketHandler {
   private WebsocketService websocketService;
-  private final ConnectionManager connections = new ConnectionManager();
+  private final Map<Integer, HashSet<Session>> connections = new HashMap<>();
 
   public WebSocketHandler(WebsocketService websocketService) {
     this.websocketService = websocketService;
