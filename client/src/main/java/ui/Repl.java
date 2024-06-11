@@ -61,9 +61,13 @@ public class Repl implements NotificationHandler {
   }
 
   private void loadGame(ChessGame game) {
-    // Will need a way to send the color to pass into drawChessBoard
-    ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.WHITE, game);
+    Client.GameRole role = client.getRole();
+    client.setGame(game);
+    if (role == Client.GameRole.BLACK) {
+      ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.WHITE, game);
+    } else {
+      ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.BLACK, game);
+    }
     System.out.println();
   }
-
 }

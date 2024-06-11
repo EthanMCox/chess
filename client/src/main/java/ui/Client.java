@@ -22,6 +22,15 @@ public class Client {
   private HashMap<Integer, Integer> listedGames = null;
   private Integer joinedGame = null;
   private boolean isObserver = false;
+  private GameRole role = GameRole.NONE;
+  private ChessGame game = null;
+
+  public enum GameRole {
+    WHITE,
+    BLACK,
+    OBSERVER,
+    NONE
+  }
   private final NotificationHandler notificationHandler;
 
   public Client(String serverUrl, NotificationHandler notificationHandler) {
@@ -279,5 +288,13 @@ public class Client {
           help - with possible commands
           """;
     }
+  }
+
+  public GameRole getRole() {
+    return role;
+  }
+
+  public void setGame(ChessGame game) {
+    this.game = game;
   }
 }
