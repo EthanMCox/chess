@@ -78,6 +78,7 @@ public class Server {
     }
 
     private void createRoutes() {
+      Spark.webSocket("/ws", webSocketHandler);
       Spark.delete("/db", this::clear);
       Spark.post("/user", this::registerUser);
       Spark.post("/session", this::loginUser);
@@ -85,7 +86,6 @@ public class Server {
       Spark.get("/game", this::listGames);
       Spark.post("/game", this::createGame);
       Spark.put("/game", this::joinGame);
-      Spark.webSocket("/ws", webSocketHandler);
       Spark.notFound("<html><body><h1>404 Error: Not Found</h1></body></html>");
     }
 

@@ -235,7 +235,7 @@ public class Client {
   }
 
   public String redraw() {
-    if (role == GameRole.NONE) {
+    if (state != State.GAMEPLAY || role == GameRole.NONE) {
       return "You must join a game to redraw the board";
     }
     if (game == null) {
@@ -251,7 +251,7 @@ public class Client {
   }
 
   public String highlightMoves(String... params) throws ExceptionResult {
-    if (role == GameRole.NONE) {
+    if (state != State.GAMEPLAY || role == GameRole.NONE) {
       return "You must join a game to highlight moves";
     }
     if (game == null) {

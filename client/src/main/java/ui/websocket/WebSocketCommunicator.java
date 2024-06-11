@@ -34,6 +34,7 @@ public class WebSocketCommunicator extends Endpoint {
       });
 
     } catch (DeploymentException | IOException | URISyntaxException ex) {
+      ex.printStackTrace();
       throw new ExceptionResult(500, ex.getMessage());
     }
   }
