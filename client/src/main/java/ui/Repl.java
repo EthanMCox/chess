@@ -36,7 +36,7 @@ public class Repl implements NotificationHandler {
   }
 
   private void printPrompt() {
-    System.out.print(RESET + ">>> " + SET_TEXT_COLOR_GREEN);
+    System.out.print(RESET + "Enter a command: \n" + SET_TEXT_COLOR_GREEN);
   }
 
   public void notify(ServerMessage message) {
@@ -64,9 +64,9 @@ public class Repl implements NotificationHandler {
     Client.GameRole role = client.getRole();
     client.setGame(game);
     if (role == Client.GameRole.BLACK) {
-      ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.WHITE, game);
-    } else {
       ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.BLACK, game);
+    } else {
+      ChessBoardWriter.drawChessBoard(System.out, ChessGame.TeamColor.WHITE, game);
     }
     System.out.println();
   }

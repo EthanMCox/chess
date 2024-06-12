@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -45,6 +46,8 @@ public class WebsocketService {
     else {
       role = "an observer";
     }
+    ChessGame game = gameData.game();
+    broadcast(command.getGameID(), new LoadGameMessage(game), connections);
     var message = String.format("%s has joined the game as %s", username, role);
     ServerMessage notification = new NotificationMessage(message);
     broadcast(command.getGameID(), notification, connections, session);
