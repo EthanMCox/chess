@@ -348,4 +348,8 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;
     }
+
+    public void resign(ChessGame.TeamColor team) {
+        teamWon = (team == TeamColor.WHITE) ? TeamWon.BLACK : TeamWon.WHITE;
+    }
 }

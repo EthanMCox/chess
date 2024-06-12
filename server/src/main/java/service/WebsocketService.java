@@ -184,8 +184,40 @@ public class WebsocketService {
     broadcast(command.getGameID(), new NotificationMessage(username + " has left the game"), connections, session);
   }
 
-  public void resign(Session session, ResignCommand command, Map<Integer, HashSet<Session>> connections) {
-    // Stub
+  public void resign(Session session, ResignCommand command, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
+    AuthData auth = authDAO.getAuth(command.getAuthString());
+    checkIfAuthorized(auth);
+    GameData gameData = gameDAO.getGame(command.getGameID());
+    if (gameData == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found"), connections, session);
+      return;
+    }
+    ChessGame game = gameData.game();
+    if (game == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found"), connections, session);
+      return;
+    }
+    if (game.getTeamWon() != ChessGame.TeamWon.NONE) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: The game has already concluded"), connections, session);
+      return;
+    }
+    String username = auth.username();
+    assert username != null;
+    String winningTeam;
+    if (gameData.whiteUsername() != null && gameData.whiteUsername().equals(username)) {
+      game.resign(ChessGame.TeamColor.WHITE);
+      winningTeam = "Black";
+    } else if (gameData.blackUsername() != null && gameData.blackUsername().equals(username)) {
+      game.resign(ChessGame.TeamColor.BLACK);
+      winningTeam = "White";
+    } else {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: You cannot resign as an observer"), connections, session);
+      return;
+    }
+    gameData = gameData.setGame(game);
+    gameDAO.updateGame(gameData);
+    String message = String.format("%s has resigned. %s wins!", username, winningTeam);
+    broadcast(command.getGameID(), new NotificationMessage(message), connections);
   }
 
   private void checkIfAuthorized(AuthData auth) throws ExceptionResult {
