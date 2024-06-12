@@ -38,6 +38,11 @@ public class WebsocketService {
     String role;
     String username = auth.username();
     GameData gameData = gameDAO.getGame(command.getGameID());
+    if (gameData == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found"), connections, session);
+      removeConnection(command.getGameID(), session, connections);
+      return;
+    }
     if (username.equals(gameData.whiteUsername())) {
       role = "white";
     } else if (username.equals(gameData.blackUsername())){
@@ -103,5 +108,9 @@ public class WebsocketService {
     } catch (IOException e) {
       throw new ExceptionResult(500, e.getMessage());
     }
+  }
+
+  private void removeConnection(Integer gameID, Session session, Map<Integer, HashSet<Session>> connections) {
+    connections.get(gameID).remove(session);
   }
 }
