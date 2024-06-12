@@ -44,9 +44,13 @@ public class WebsocketService {
       removeConnection(command.getGameID(), session, connections);
       return;
     }
-    if (username.equals(gameData.whiteUsername())) {
+    if (username == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: user not found"), connections, session);
+      return;
+    }
+    if (gameData.whiteUsername() != null && username.equals(gameData.whiteUsername())) {
       role = "white";
-    } else if (username.equals(gameData.blackUsername())){
+    } else if (gameData.blackUsername() != null && username.equals(gameData.blackUsername())){
       role = "black";
     }
     else {
@@ -160,16 +164,20 @@ public class WebsocketService {
     removeConnection(command.getGameID(), session, connections);
 
     String username = auth.username();
+    if (username == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: user not found"), connections, session);
+      return;
+    }
     GameData gameData = gameDAO.getGame(command.getGameID());
 
     if (gameData == null) {
       broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found"), connections, session);
       return;
     }
-    if (gameData.whiteUsername().equals(username)) {
+    if (gameData.whiteUsername() != null && gameData.whiteUsername().equals(username)) {
       gameData = gameData.setWhiteUsername(null);
       gameDAO.updateGame(gameData);
-    } else if (gameData.blackUsername().equals(username)) {
+    } else if (gameData.blackUsername() != null && gameData.blackUsername().equals(username)) {
       gameData = gameData.setBlackUsername(null);
       gameDAO.updateGame(gameData);
     }
