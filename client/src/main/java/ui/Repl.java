@@ -40,14 +40,12 @@ public class Repl implements NotificationHandler {
   }
 
   public void notify(ServerMessage message) {
-    // Update this letter with actual notify code
     switch (message.getServerMessageType()) {
       case NOTIFICATION -> displayNotification(((NotificationMessage) message).getMessage());
       case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
       case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
     }
-    // Might need this later, but test
-//    printPrompt();
+    printPrompt();
   }
 
   private void displayNotification(String message) {

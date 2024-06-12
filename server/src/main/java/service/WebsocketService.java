@@ -47,7 +47,7 @@ public class WebsocketService {
       role = "an observer";
     }
     ChessGame game = gameData.game();
-    broadcast(command.getGameID(), new LoadGameMessage(game), connections);
+    broadcastToSelf(command.getGameID(), new LoadGameMessage(game), connections, session);
     var message = String.format("%s has joined the game as %s", username, role);
     ServerMessage notification = new NotificationMessage(message);
     broadcast(command.getGameID(), notification, connections, session);
@@ -84,6 +84,16 @@ public class WebsocketService {
     // Clean up sessions that have been closed in the game
     for (var session : removeList) {
       connections.get(gameID).remove(session);
+    }
+  }
+
+  private void broadcastToSelf(Integer gameID, ServerMessage notification, Map<Integer, HashSet<Session>> connections, Session session) throws ExceptionResult {
+    if (connections.get(gameID).contains(session)) {
+      if (session.isOpen()) {
+        sendMessage(session, notification);
+      } else {
+        connections.get(gameID).remove(session);
+      }
     }
   }
 

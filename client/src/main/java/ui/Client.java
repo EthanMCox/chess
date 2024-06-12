@@ -200,6 +200,7 @@ public class Client {
       SuccessResult response = server.joinGame(gameID, teamColor, authToken);
       if (response != null) {
         ws = new WebSocketCommunicator(serverUrl, notificationHandler);
+        role = teamColor == ChessGame.TeamColor.WHITE ? GameRole.WHITE : GameRole.BLACK;
         ws.connectToGame(authToken, gameID);
         joinedGame = gameID;
         return "";
