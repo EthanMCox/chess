@@ -24,7 +24,6 @@ public class Client {
   private String authToken = null;
   private HashMap<Integer, Integer> listedGames = null;
   private Integer joinedGame = null;
-  private boolean isObserver = false;
   private GameRole role = GameRole.NONE;
   private ChessGame game = null;
   private WebSocketCommunicator ws = null;
@@ -118,6 +117,9 @@ public class Client {
     if (state == State.SIGNEDOUT) {
       return "You are already logged out";
     }
+    if (state == State.GAMEPLAY) {
+      return "You must leave the game before logging out";
+    }
     SuccessResult response = server.logout(authToken);
     if (response != null) {
       state = State.SIGNEDOUT;
@@ -125,7 +127,7 @@ public class Client {
       username = null;
       listedGames = null;
       joinedGame = null;
-      isObserver = false;
+      role = GameRole.NONE;
       return "You are logged out";
     }
     return "Error: unable to logout";
@@ -181,13 +183,16 @@ public class Client {
     if (state == State.SIGNEDOUT) {
       throw new ExceptionResult(400, "You must be logged in to join a game");
     }
+    if (state == State.GAMEPLAY) {
+      throw new ExceptionResult(400, "You are already in a game. Leave to join another game");
+    }
     if (listedGames == null) {
       throw new ExceptionResult(400, "List games to view available games");
     }
     if (params.length >= 2) {
       Integer gameID = listedGames.get(Integer.parseInt(params[0]));
       if (gameID == null) {
-        throw new ExceptionResult(400, "Invalid game ID. List games to view available games");
+        throw new ExceptionResult(400, "Invalid game. List games to view available games");
       }
       ChessGame.TeamColor teamColor;
       if (params[1].equalsIgnoreCase("white")) {
@@ -199,10 +204,11 @@ public class Client {
       }
       SuccessResult response = server.joinGame(gameID, teamColor, authToken);
       if (response != null) {
-        ws = new WebSocketCommunicator(serverUrl, notificationHandler);
         role = teamColor == ChessGame.TeamColor.WHITE ? GameRole.WHITE : GameRole.BLACK;
-        ws.connectToGame(authToken, gameID);
+        state = State.GAMEPLAY;
         joinedGame = gameID;
+        ws = new WebSocketCommunicator(serverUrl, notificationHandler);
+        ws.connectToGame(authToken, gameID);
         return "";
       }
       throw new ExceptionResult(400, "Error: unable to join game");
@@ -214,8 +220,8 @@ public class Client {
     if (state == State.SIGNEDOUT) {
       throw new ExceptionResult(400, "You must be logged in to observe a game");
     }
-    if (joinedGame != null) {
-      throw new ExceptionResult(400, "You are already in a game. Quit to observe another game");
+    if (state == State.GAMEPLAY || joinedGame != null) {
+      throw new ExceptionResult(400, "You are already in a game. Leave to observe another game");
     }
     if (params.length >= 1) {
       Integer gameID = listedGames.get(Integer.parseInt(params[0]));
@@ -223,13 +229,11 @@ public class Client {
         throw new ExceptionResult(400, "Invalid game ID. List games to view available games");
       }
       joinedGame = gameID;
-      isObserver = true;
-      ChessBoard board = new ChessBoard();
-      board.resetBoard();
-      var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-      ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.WHITE, board);
-      ChessBoardWriter.drawChessBoard(out, ChessGame.TeamColor.BLACK, board);
-      return String.format("%s is observing game %d", username, Integer.parseInt(params[0]));
+      role = GameRole.OBSERVER;
+      state = State.GAMEPLAY;
+      ws = new WebSocketCommunicator(serverUrl, notificationHandler);
+      ws.connectToGame(authToken, gameID);
+      return "";
     }
     throw new ExceptionResult(400, "Expected: observe <ID>");
   }
