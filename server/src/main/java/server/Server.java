@@ -10,7 +10,7 @@ import results.*;
 import results.SuccessResult;
 import service.*;
 import spark.*;
-import util.JsonSerializer;
+import sharedutil.JsonSerializer;
 import server.websocket.WebSocketHandler;
 
 

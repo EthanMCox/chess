@@ -4,13 +4,11 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.WebsocketService;
-import util.JsonSerializer;
+import sharedutil.JsonSerializer;
 import websocket.commands.*;
 import exception.ExceptionResult;
 import websocket.messages.ErrorMessage;
-import websocket.messages.ServerMessage;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

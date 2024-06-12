@@ -3,7 +3,7 @@ package ui.websocket;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ExceptionResult;
-import util.JsonSerializer;
+import sharedutil.JsonSerializer;
 import websocket.messages.*;
 import websocket.commands.*;
 

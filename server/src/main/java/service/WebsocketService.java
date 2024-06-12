@@ -10,7 +10,7 @@ import dataaccess.UserDAO;
 import exception.ExceptionResult;
 import model.*;
 import org.eclipse.jetty.websocket.api.Session;
-import util.JsonSerializer;
+import sharedutil.JsonSerializer;
 import websocket.commands.*;
 import websocket.messages.*;
 

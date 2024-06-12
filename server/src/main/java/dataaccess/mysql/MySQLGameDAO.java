@@ -7,7 +7,7 @@ import dataaccess.GameDAO;
 import exception.ExceptionResult;
 import model.GameData;
 import model.ListGamesData;
-import util.JsonSerializer;
+import sharedutil.JsonSerializer;
 
 import java.sql.SQLException;
 import java.util.Collection;
