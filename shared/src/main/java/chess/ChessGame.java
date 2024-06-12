@@ -22,6 +22,7 @@ public class ChessGame {
     private boolean whiteRookRightMoved;
     private boolean blackRookLeftMoved;
     private boolean blackRookRightMoved;
+    private TeamWon teamWon = TeamWon.NONE;
 
     public static final Collection<ChessPosition> VALID_POSITIONS;
 
@@ -90,6 +91,13 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public enum TeamWon {
+        WHITE,
+        BLACK,
+        DRAW,
+        NONE
     }
 
     /**
