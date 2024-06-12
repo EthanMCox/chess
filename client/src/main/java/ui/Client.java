@@ -1,7 +1,8 @@
 package ui;
 
-import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ExceptionResult;
 import model.*;
@@ -10,8 +11,6 @@ import serverclientcommunication.ServerFacade;
 import ui.websocket.NotificationHandler;
 import ui.websocket.WebSocketCommunicator;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -250,8 +249,50 @@ public class Client {
     return "";
   }
 
-  public String makeMove(String... params) {
-    return "placeholder";
+  public String makeMove(String... params) throws ExceptionResult {
+    if (state != State.GAMEPLAY || role == GameRole.NONE) {
+      return "You must join a game to make a move";
+    }
+    if (role == GameRole.OBSERVER) {
+      return "Observers cannot make moves";
+    }
+    if (game == null) { // Do I need this?
+      return "Error: no game available to make a move";
+    }
+    if (params.length >= 2) {
+      ChessPosition from;
+      ChessPosition to;
+      try {
+        from = new ChessPosition(params[0]);
+        to = new ChessPosition(params[1]);
+      } catch (ExceptionResult ex) {
+        return "Error: " + ex.getMessage();
+      }
+      ChessMove move;
+      if (params.length == 4) {
+        if (!params[0].equals("->") || !validPromotionPiece(params[3])) {
+          return "Expected: move <from> <to> -> <promotionPiece>\n    Ex: move e7 e8 -> q OR move f2 f4";
+        }
+        ChessPiece.PieceType promotionPiece;
+        switch (params[3].toLowerCase()) {
+          case "r" -> promotionPiece = ChessPiece.PieceType.ROOK;
+          case "b" -> promotionPiece = ChessPiece.PieceType.BISHOP;
+          case "n" -> promotionPiece = ChessPiece.PieceType.KNIGHT;
+          default -> promotionPiece = ChessPiece.PieceType.QUEEN;
+        }
+        move = new ChessMove(from, to, promotionPiece);
+      } else {
+        move = new ChessMove(from, to, null);
+      }
+      ws.makeMove(authToken, joinedGame, move);
+      return "";
+    }
+    return "Error: unable to make move";
+  }
+
+  private boolean validPromotionPiece(String promotionPiece) {
+    return promotionPiece.equalsIgnoreCase("q") || promotionPiece.equalsIgnoreCase("r") ||
+            promotionPiece.equalsIgnoreCase("b") || promotionPiece.equalsIgnoreCase("n");
   }
 
   public String highlightMoves(String... params) throws ExceptionResult {
