@@ -148,11 +148,32 @@ public class WebsocketService {
   }
 
   private static boolean isWrongTurn(ChessGame game, GameData gameData, String username) {
-    return (game.getTeamTurn() == ChessGame.TeamColor.WHITE && !username.equals(gameData.whiteUsername())) || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !username.equals(gameData.blackUsername()));
+    return (game.getTeamTurn() == ChessGame.TeamColor.WHITE && !username.equals(gameData.whiteUsername())) ||
+            (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !username.equals(gameData.blackUsername()));
   }
 
-  public void leaveGame(Session session, LeaveCommand command, Map<Integer, HashSet<Session>> connections) {
-    // Stub
+  public void leaveGame(Session session, LeaveCommand command,
+                        Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
+    AuthData auth = authDAO.getAuth(command.getAuthString());
+    checkIfAuthorized(auth);
+
+    removeConnection(command.getGameID(), session, connections);
+
+    String username = auth.username();
+    GameData gameData = gameDAO.getGame(command.getGameID());
+
+    if (gameData == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found"), connections, session);
+      return;
+    }
+    if (gameData.whiteUsername().equals(username)) {
+      gameData = gameData.setWhiteUsername(null);
+      gameDAO.updateGame(gameData);
+    } else if (gameData.blackUsername().equals(username)) {
+      gameData = gameData.setBlackUsername(null);
+      gameDAO.updateGame(gameData);
+    }
+    broadcast(command.getGameID(), new NotificationMessage(username + " has left the game"), connections, session);
   }
 
   public void resign(Session session, ResignCommand command, Map<Integer, HashSet<Session>> connections) {
