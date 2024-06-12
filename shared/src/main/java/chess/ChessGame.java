@@ -64,6 +64,10 @@ public class ChessGame {
         teamTurn = team;
     }
 
+    public TeamWon getTeamWon() {
+        return teamWon;
+    }
+
     @Override
     public String toString() {
         return "ChessGame{" +
@@ -281,7 +285,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return isInCheck(teamColor) && hasNoValidMoves(teamColor);
+        if (isInCheck(teamColor) && hasNoValidMoves(teamColor)) {
+            teamWon = (teamColor == TeamColor.WHITE) ? TeamWon.BLACK : TeamWon.WHITE;
+            return true;
+        };
+        return false;
     }
 
     /**
@@ -292,7 +300,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-      return !isInCheck(teamColor) && hasNoValidMoves(teamColor);
+      if (!isInCheck(teamColor) && hasNoValidMoves(teamColor)) {
+          teamWon = TeamWon.DRAW;
+          return true;
+      };
+      return false;
     }
 
     private boolean hasNoValidMoves(TeamColor teamColor) {
