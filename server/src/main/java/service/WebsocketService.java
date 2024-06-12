@@ -107,12 +107,26 @@ public class WebsocketService {
     gameDAO.updateGame(gameData);
 
     broadcast(command.getGameID(), new LoadGameMessage(game), connections);
-
     sendMoveNotification(session, command, connections, move, username);
+    sendGameStatusNotification(command, connections, game);
+  }
 
-
-
-
+  private void sendGameStatusNotification(MakeMoveCommand command, Map<Integer, HashSet<Session>> connections, ChessGame game) throws ExceptionResult {
+    ChessGame.TeamColor teamTurn = game.getTeamTurn();
+    String turn = teamTurn == ChessGame.TeamColor.WHITE ? "White" : "Black";
+    String message = null;
+    if (game.isInCheckmate(teamTurn)) {
+      message = String.format("%s is in checkmate. %s wins!", turn, turn.equals("White") ? "Black" : "White");
+    }
+    else if (game.isInCheck(teamTurn)) {
+      message = String.format("%s is in check", turn);
+    }
+    else if (game.isInStalemate(teamTurn)) {
+      message = "The game has ended in stalemate";
+    }
+    if (message != null) {
+      broadcast(command.getGameID(), new NotificationMessage(message), connections);
+    }
   }
 
   private void sendMoveNotification(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections, ChessMove move, String username) throws ExceptionResult {
