@@ -51,6 +51,10 @@ public class ChessPosition {
         return col;
     }
 
+    public String getPositionAsString() {
+        return String.format("%c%d", (char) (col + 'a' - 1), row);
+    }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

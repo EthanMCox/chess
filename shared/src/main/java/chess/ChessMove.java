@@ -45,6 +45,14 @@ public class ChessMove {
         return promotionPiece;
     }
 
+    public String getPromotionPieceAsString() {
+        try {
+          return promotionPiece.toString().toLowerCase();
+        } catch (NullPointerException e) {
+          return null;
+        }
+    }
+
 
   @Override
   public boolean equals(Object o) {

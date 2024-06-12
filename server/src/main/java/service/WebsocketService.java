@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -61,8 +62,16 @@ public class WebsocketService {
   public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
     AuthData auth = authDAO.getAuth(command.getAuthString());
     checkIfAuthorized(auth);
+
+    ChessMove move = command.getMove();
+    if (move == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: invalid move"), connections, session);
+      return;
+    }
+
     String username = auth.username();
     GameData gameData = gameDAO.getGame(command.getGameID());
+
     if (gameData == null) {
       broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found. Please leave and rejoin another game"), connections, session);
       removeConnection(command.getGameID(), session, connections);
@@ -94,6 +103,30 @@ public class WebsocketService {
       return;
     }
 
+    gameData = gameData.setGame(game);
+    gameDAO.updateGame(gameData);
+
+    broadcast(command.getGameID(), new LoadGameMessage(game), connections);
+
+    sendMoveNotification(session, command, connections, move, username);
+
+
+
+
+  }
+
+  private void sendMoveNotification(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections, ChessMove move, String username) throws ExceptionResult {
+    String startPosition = move.getStartPosition().getPositionAsString();
+    String endPosition = move.getEndPosition().getPositionAsString();
+    String promotionPiece = move.getPromotionPieceAsString();
+    String message;
+    if (promotionPiece != null) {
+      message = String.format("%s moved %s to %s and promoted to %s", username, startPosition, endPosition, promotionPiece);
+    } else {
+      message = String.format("%s moved %s to %s", username, startPosition, endPosition);
+    }
+    ServerMessage notification = new NotificationMessage(message);
+    broadcast(command.getGameID(), notification, connections, session);
   }
 
   private static boolean notAPlayer(String username, GameData gameData) {
