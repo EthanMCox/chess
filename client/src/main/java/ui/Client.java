@@ -335,8 +335,12 @@ public class Client {
     return "You have left the game. Type help to view more options";
   }
 
-  public String resignGame() {
-    return "placeholder";
+  public String resignGame() throws ExceptionResult {
+    if (state != State.GAMEPLAY || role == GameRole.NONE) {
+      return "You are not in a game";
+    }
+    ws.resign(authToken, joinedGame);
+    return "";
   }
 
   public String quit() {
