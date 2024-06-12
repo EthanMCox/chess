@@ -3,6 +3,7 @@ package ui.websocket;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ExceptionResult;
+import util.JsonSerializer;
 import websocket.messages.*;
 import websocket.commands.*;
 
@@ -29,6 +30,11 @@ public class WebSocketCommunicator extends Endpoint {
         @Override
         public void onMessage(String message) {
           ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+          switch (notification.getServerMessageType()) {
+            case NOTIFICATION -> notification = JsonSerializer.deserialize(message, NotificationMessage.class);
+            case ERROR -> notification = JsonSerializer.deserialize(message, ErrorMessage.class);
+            case LOAD_GAME -> notification = JsonSerializer.deserialize(message, LoadGameMessage.class);
+          }
           notificationHandler.notify(notification);
         }
       });
