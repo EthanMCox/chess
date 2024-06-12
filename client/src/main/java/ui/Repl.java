@@ -39,13 +39,17 @@ public class Repl implements NotificationHandler {
     System.out.print(RESET + "Enter a command: \n" + SET_TEXT_COLOR_GREEN);
   }
 
+  private void setInputColor() {
+    System.out.print(RESET + SET_TEXT_COLOR_GREEN);
+  }
+
   public void notify(ServerMessage message) {
     switch (message.getServerMessageType()) {
       case NOTIFICATION -> displayNotification(((NotificationMessage) message).getMessage());
       case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
       case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
     }
-    printPrompt();
+    setInputColor();
   }
 
   private void displayNotification(String message) {

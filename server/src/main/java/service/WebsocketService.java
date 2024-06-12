@@ -135,9 +135,9 @@ public class WebsocketService {
     String promotionPiece = move.getPromotionPieceAsString();
     String message;
     if (promotionPiece != null) {
-      message = String.format("%s moved %s to %s and promoted to %s", username, startPosition, endPosition, promotionPiece);
+      message = String.format("%s moved from %s to %s and promoted to %s", username, startPosition, endPosition, promotionPiece);
     } else {
-      message = String.format("%s moved %s to %s", username, startPosition, endPosition);
+      message = String.format("%s moved from %s to %s", username, startPosition, endPosition);
     }
     ServerMessage notification = new NotificationMessage(message);
     broadcast(command.getGameID(), notification, connections, session);

@@ -92,7 +92,7 @@ public class Client {
   }
 
   public String login(String... params) throws ExceptionResult {
-    if (state == State.SIGNEDIN) {
+    if (state != State.SIGNEDOUT) {
       throw new ExceptionResult(400, "You are already logged in. Logout to switch accounts");
     }
     if (params.length >= 2) {
@@ -136,6 +136,9 @@ public class Client {
     if (state == State.SIGNEDOUT) {
       throw new ExceptionResult(400, "You must be logged in to create a game");
     }
+    if (state == State.GAMEPLAY) {
+      throw new ExceptionResult(400, "You are already in a game. Leave to create another game");
+    }
     if (params.length >= 1) {
       String gameName = params[0];
       CreateGameResult response = server.createGame(gameName, authToken);
@@ -150,6 +153,9 @@ public class Client {
   public String listGames() throws ExceptionResult {
     if (state == State.SIGNEDOUT) {
       throw new ExceptionResult(400, "You must be logged in to view games");
+    }
+    if (state == State.GAMEPLAY) {
+      throw new ExceptionResult(400, "You are already in a game. Leave to view available games");
     }
     ListGamesResult response = server.listGames(authToken);
     if (response != null) {
@@ -270,7 +276,7 @@ public class Client {
       }
       ChessMove move;
       if (params.length == 4) {
-        if (!params[0].equals("->") || !validPromotionPiece(params[3])) {
+        if (!params[2].equals("->") || !validPromotionPiece(params[3])) {
           return "Expected: move <from> <to> -> <promotionPiece>\n    Ex: move e7 e8 -> q OR move f2 f4";
         }
         ChessPiece.PieceType promotionPiece;
@@ -315,8 +321,18 @@ public class Client {
     return "";
   }
 
-  public String leaveGame() {
-    return "placeholder";
+  public String leaveGame() throws ExceptionResult {
+    if (state != State.GAMEPLAY || role == GameRole.NONE) {
+      return "You are not in a game";
+    }
+    ws.leaveGame(authToken, joinedGame);
+    ws = null;
+    game = null;
+    joinedGame = null;
+    listedGames = null;
+    role = GameRole.NONE;
+    state = State.SIGNEDIN;
+    return "You have left the game. Type help to view more options";
   }
 
   public String resignGame() {
@@ -324,6 +340,7 @@ public class Client {
   }
 
   public String quit() {
+    // Handle states here
     return "quit";
   }
 
@@ -352,9 +369,9 @@ public class Client {
           Commands:
           redraw - the board
           move <from> <to> -> <promotionPiece> - a piece
-              Ex: move e7 e8 -> q OR move f2 f4
+          - Ex: move e7 e8 -> q OR move f2 f4
           highlight <position> - legal moves
-              Ex: highlight c5
+          - Ex: highlight c5
           leave - the game
           resign - the game
           help - with possible commands

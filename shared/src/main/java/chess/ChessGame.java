@@ -208,7 +208,7 @@ public class ChessGame {
         }  else if (startPosition == endPosition) {
             throw new InvalidMoveException("Start and end positions are the same");
         } else if (!board.getPiece(startPosition).getTeamColor().equals(teamTurn)) {
-            throw new InvalidMoveException("Not your turn");
+            throw new InvalidMoveException("You tried moving the opponent's piece");
         }
         else {
             previousBoardState = new ChessBoard(board);
@@ -221,6 +221,11 @@ public class ChessGame {
             updateCastlingStates(startRow, startCol, endRow, endCol);
 
             teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+            if (isInCheckmate(teamTurn)) {
+                teamWon = (teamTurn == TeamColor.WHITE) ? TeamWon.BLACK : TeamWon.WHITE;
+            } else if (isInStalemate(teamTurn)) {
+                teamWon = TeamWon.DRAW;
+            }
         }
     }
 
