@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -32,9 +33,8 @@ public class WebsocketService {
   public void connect(Session session, ConnectCommand command, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
     connections.get(command.getGameID()).add(session);
     AuthData auth = authDAO.getAuth(command.getAuthString());
-    if (auth == null) {
-      throw new ExceptionResult(401, "Error: unauthorized");
-    }
+    checkIfAuthorized(auth);
+
     String role;
     String username = auth.username();
     GameData gameData = gameDAO.getGame(command.getGameID());
@@ -58,8 +58,49 @@ public class WebsocketService {
     broadcast(command.getGameID(), notification, connections, session);
   }
 
-  public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections) {
-    // Stub
+  public void makeMove(Session session, MakeMoveCommand command, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
+    AuthData auth = authDAO.getAuth(command.getAuthString());
+    checkIfAuthorized(auth);
+    String username = auth.username();
+    GameData gameData = gameDAO.getGame(command.getGameID());
+    if (gameData == null) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: game not found. Please leave and rejoin another game"), connections, session);
+      removeConnection(command.getGameID(), session, connections);
+      return;
+    }
+    if (notAPlayer(username, gameData)) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: you are not a player in this game"), connections, session);
+      return;
+    }
+    ChessGame game = gameData.game();
+    if (game.getTeamWon() == ChessGame.TeamWon.DRAW) { // Game already stalemate
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: Game has already concluded in stalemate"), connections, session);
+      return;
+    }
+    if (game.getTeamWon() != ChessGame.TeamWon.NONE) { // Someone already won
+      String winningTeam = game.getTeamWon() == ChessGame.TeamWon.WHITE ? "White" : "Black";
+      String message = String.format("Error: Game has already concluded. %s has won", winningTeam);
+      broadcastToSelf(command.getGameID(), new ErrorMessage(message), connections, session);
+      return;
+    }
+    if (isWrongTurn(game, gameData, username)) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: it is not your turn"), connections, session);
+      return;
+    }
+    try {
+      game.makeMove(command.getMove());
+    } catch (InvalidMoveException e) {
+      broadcastToSelf(command.getGameID(), new ErrorMessage("Error: " + e.getMessage()), connections, session);
+      return;
+    }
+  }
+
+  private static boolean notAPlayer(String username, GameData gameData) {
+    return !username.equals(gameData.whiteUsername()) && !username.equals(gameData.blackUsername());
+  }
+
+  private static boolean isWrongTurn(ChessGame game, GameData gameData, String username) {
+    return (game.getTeamTurn() == ChessGame.TeamColor.WHITE && !username.equals(gameData.whiteUsername())) || (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !username.equals(gameData.blackUsername()));
   }
 
   public void leaveGame(Session session, LeaveCommand command, Map<Integer, HashSet<Session>> connections) {
@@ -68,6 +109,12 @@ public class WebsocketService {
 
   public void resign(Session session, ResignCommand command, Map<Integer, HashSet<Session>> connections) {
     // Stub
+  }
+
+  private void checkIfAuthorized(AuthData auth) throws ExceptionResult {
+    if (auth == null) {
+      throw new ExceptionResult(401, "Error: unauthorized");
+    }
   }
 
   private void broadcast(Integer gameID, ServerMessage notification, Map<Integer, HashSet<Session>> connections) throws ExceptionResult {
