@@ -10,4 +10,8 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
   public GameData setBlackUsername(String blackUsername) {
     return new GameData(this.gameID, this.whiteUsername, blackUsername, this.gameName, this.game);
   }
+
+  public GameData setGame(ChessGame game) {
+    return new GameData(this.gameID, this.whiteUsername, this.blackUsername, this.gameName, game);
+  }
 }

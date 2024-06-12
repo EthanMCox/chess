@@ -93,6 +93,7 @@ public class WebsocketService {
       broadcastToSelf(command.getGameID(), new ErrorMessage("Error: " + e.getMessage()), connections, session);
       return;
     }
+
   }
 
   private static boolean notAPlayer(String username, GameData gameData) {
